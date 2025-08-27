@@ -1,0 +1,239 @@
+<div class="news-management">
+  <div class="page-header">
+    <h1>News Management</h1>
+    <button (click)="showCreateForm = true; resetForm()" class="create-btn">
+      <span class="material-symbols-outlined">add</span>
+      Create News
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading">
+    <p>Loading news articles...</p>
+  </div>
+
+  <!-- News Management Content -->
+  <div *ngIf="!isLoading" class="management-content">
+    <!-- Create/Edit Form -->
+    <div *ngIf="showCreateForm" class="news-form-container">
+      <div class="form-header">
+        <h2>{{ editingNews ? 'Edit News Article' : 'Create News Article' }}</h2>
+        <button (click)="cancelEdit()" class="close-btn">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <form [formGroup]="newsForm" (ngSubmit)="editingNews ? updateNews() : createNews()" class="news-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="title">Title *</label>
+            <input 
+              id="title"
+              type="text" 
+              formControlName="title" 
+              placeholder="Enter news title"
+              class="form-control"
+            >
+            <div *ngIf="newsForm.get('title')?.invalid && newsForm.get('title')?.touched" class="error-message">
+              Title is required and must be at least 5 characters
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="summary">Summary *</label>
+            <textarea 
+              id="summary"
+              formControlName="summary" 
+              placeholder="Enter a brief summary"
+              rows="3"
+              class="form-control"
+            ></textarea>
+            <div *ngIf="newsForm.get('summary')?.invalid && newsForm.get('summary')?.touched" class="error-message">
+              Summary is required and must be at least 10 characters
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="content">Content *</label>
+            <textarea 
+              id="content"
+              formControlName="content" 
+              placeholder="Enter the full news content"
+              rows="10"
+              class="form-control"
+            ></textarea>
+            <div *ngIf="newsForm.get('content')?.invalid && newsForm.get('content')?.touched" class="error-message">
+              Content is required and must be at least 50 characters
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="tags">Tags</label>
+            <input 
+              id="tags"
+              type="text" 
+              formControlName="tags" 
+              placeholder="Enter tags separated by commas"
+              class="form-control"
+            >
+          </div>
+          <div class="form-group">
+            <label for="image">Image URL</label>
+            <input 
+              id="image"
+              type="text" 
+              formControlName="image" 
+              placeholder="Enter image URL"
+              class="form-control"
+            >
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" formControlName="featured">
+              <span class="checkmark"></span>
+              Featured Article
+            </label>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" (click)="cancelEdit()" class="cancel-btn">Cancel</button>
+          <button type="submit" [disabled]="newsForm.invalid" class="submit-btn">
+            {{ editingNews ? 'Update News' : 'Create News' }}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+      <div class="search-box">
+        <span class="material-symbols-outlined">search</span>
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm" 
+          placeholder="Search news by title or summary..."
+          class="search-input"
+        >
+      </div>
+      
+      <div class="status-filter">
+        <label for="status-select">Filter by status:</label>
+        <select id="status-select" [(ngModel)]="selectedStatus" class="status-select">
+          <option value="all">All Status</option>
+          <option value="draft">Draft</option>
+          <option value="published">Published</option>
+          <option value="archived">Archived</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- News List -->
+    <div class="news-list">
+      <div *ngFor="let article of filteredNews" class="news-card">
+        <div class="news-header">
+          <div class="news-info">
+            <h3>{{ article.title }}</h3>
+            <p class="summary">{{ article.summary }}</p>
+            <div class="meta">
+              <span class="author">by {{ article.author && article.author.username }}</span>
+              <span class="date">{{ article.created_at | date:'short' }}</span>
+              <span *ngIf="article.featured" class="featured-badge">Featured</span>
+            </div>
+          </div>
+          <div class="status-section">
+            <span class="status-badge" [ngClass]="getStatusBadgeClass(article.status)">
+              {{ getStatusText(article.status) }}
+            </span>
+            <span *ngIf="article.views" class="views">{{ article.views }} views</span>
+          </div>
+        </div>
+
+        <div class="news-content">
+          <div class="news-image" *ngIf="article.image">
+            <img [src]="article.image" [alt]="article.title">
+          </div>
+          <div class="news-text">
+            <p>{{ getTruncatedContent(article.content) }}</p>
+          </div>
+        </div>
+
+        <div class="news-actions">
+          <div class="action-buttons">
+            <button 
+              (click)="editNews(article)" 
+              class="edit-btn"
+              title="Edit news"
+            >
+              <span class="material-symbols-outlined">edit</span>
+              Edit
+            </button>
+            
+            <button 
+              *ngIf="article.status === 'draft'"
+              (click)="publishNews(article._id)" 
+              class="publish-btn"
+              title="Publish news"
+            >
+              <span class="material-symbols-outlined">publish</span>
+              Publish
+            </button>
+            
+            <button 
+              *ngIf="article.status === 'published'"
+              (click)="archiveNews(article._id)" 
+              class="archive-btn"
+              title="Archive news"
+            >
+              <span class="material-symbols-outlined">archive</span>
+              Archive
+            </button>
+            
+            <button 
+              (click)="deleteNews(article._id)" 
+              class="delete-btn"
+              title="Delete news"
+            >
+              <span class="material-symbols-outlined">delete</span>
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- No News Message -->
+      <div *ngIf="filteredNews.length === 0" class="no-news">
+        <p>No news articles found matching your criteria.</p>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="summary">
+      <div class="summary-item">
+        <span class="summary-label">Total News:</span>
+        <span class="summary-value">{{ news.length }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Drafts:</span>
+        <span class="summary-value">{{ getDraftCount() }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Published:</span>
+        <span class="summary-value">{{ getPublishedCount() }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Archived:</span>
+        <span class="summary-value">{{ getArchivedCount() }}</span>
+      </div>
+    </div>
+  </div>
+</div>

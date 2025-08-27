@@ -1,0 +1,58 @@
+<div class="container">
+  <form class="login" #form="ngForm" (ngSubmit)="login(form)">
+    <fieldset>
+      <h2>Влез в профила си:</h2>
+
+      <p class="field field-icon">
+        <label for="email">E-mail:</label>
+        <input
+          type="email"
+          name="email"
+          id="email"
+          placeholder="john.doe@gmail.com"
+          #inputEmail="ngModel"
+          ngModel
+          required
+            />
+      </p>
+   
+
+      <p class="field field-icon">
+        <label for="password">Парола:</label>
+        <input
+          type="password"
+          name="password"
+          id="password"
+          placeholder="******"
+          #inputPassword="ngModel"
+          ngModel
+          required
+        />
+      </p>
+
+      <button
+      [disabled]="form.invalid"
+      [style]="{backgroundColor : form.invalid ? 'lightgray' : 'lightgreen'}"
+      >Влезте в профила си</button>
+
+      <p class="text-center">
+        Ако нямате профил?
+        <a routerLink="/register">Регистрирайте се</a>
+      </p>
+    </fieldset>
+  </form>
+  
+  <!-- Test button to bypass form validation -->
+  <div style="margin-top: 20px; padding: 10px; background: #f0f0f0;">
+    <button (click)="testLogin()" style="background-color: #007bff; color: white; padding: 10px; border: none; border-radius: 5px; margin-right: 10px;">
+      Test Login (Bypass Form)
+    </button>
+    <strong>Debug Info:</strong><br>
+    Form Valid: {{ form.valid }}<br>
+    Form Value: {{ form.value | json }}<br>
+    Email Valid: {{ inputEmail.valid }}<br>
+    Password Valid: {{ inputPassword.valid }}<br>
+    Email Value: {{ inputEmail.value }}<br>
+    Password Value: {{ inputPassword.value }}
+  </div>
+</div>

@@ -1,0 +1,424 @@
+<div class="admin-profile-container">
+    <div class="admin-profile-header">
+        <h1>⚡ Админ Профил</h1>
+        <p>Управление на административните функции</p>
+        <button (click)="refreshDashboard()" class="refresh-btn">
+            🔄 Обнови данните
+        </button>
+    </div>
+
+    <div class="admin-stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-content">
+                <h3>Потребители</h3>
+                <p class="stat-number">{{ userCount }}</p>
+                <p class="stat-subtitle">Админи: {{ getAdminCount() }} | Потребители: {{ getUserCount() }}</p>
+                <button (click)="showUsersSection()" class="stat-action">Управлявай</button>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">📝</div>
+            <div class="stat-content">
+                <h3>Рецепти за модерация</h3>
+                <p class="stat-number">{{ pendingRecipes }}</p>
+                <button (click)="showModerationSection()" class="stat-action">Модерирай</button>
+            </div>
+        </div>
+
+
+
+
+
+        <div class="stat-card">
+            <div class="stat-icon">🍳</div>
+            <div class="stat-content">
+                <h3>Курсове</h3>
+                <p class="stat-number">{{ courseCount }}</p>
+                <button (click)="showCoursesSection()" class="stat-action">Управлявай</button>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">📧</div>
+            <div class="stat-content">
+                <h3>Контактни съобщения</h3>
+                <p class="stat-number">{{ contactCount }}</p>
+                <p class="stat-subtitle">Нови: {{ newContactCount }}</p>
+                <div class="stat-actions">
+                    <button (click)="showContactSection()" class="stat-action">Управлявай</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">🎁</div>
+            <div class="stat-content">
+                <h3>Томбола</h3>
+                <p class="stat-number">{{ lotteryParticipants || 0 }}</p>
+                <p class="stat-subtitle">Активна: {{ lotteryActive ? 'Да' : 'Няма' }}</p>
+                <button (click)="showLotterySection()" class="stat-action">Управлявай</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dynamic Admin Sections -->
+    <div class="admin-sections">
+        <!-- Users Management Section -->
+        <div *ngIf="activeSection === 'users'" class="admin-section">
+            <h2>👥 Управление на Потребители</h2>
+            <div class="users-list">
+                <div *ngFor="let user of users" class="user-item">
+                    <div class="user-info">
+                        <strong>{{ user.username }}</strong> ({{ user.email }})
+                        <span class="user-role">{{ user.role }}</span>
+                    </div>
+                    <div class="user-actions">
+                        <button (click)="changeUserRole(user._id, user.role === 'admin' ? 'user' : 'admin')"
+                            class="role-btn">
+                            {{ user.role === 'admin' ? 'Премахни админ' : 'Направи админ' }}
+                        </button>
+                        <button (click)="deleteUser(user._id)" class="delete-btn">Изтрий</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recipe Moderation Section -->
+        <div *ngIf="activeSection === 'moderation'" class="admin-section">
+            <h2>📝 Модерация на Рецепти</h2>
+            <div class="recipes-list">
+                <div *ngFor="let recipe of pendingRecipesList" class="recipe-item">
+                    <div class="recipe-info">
+                        <h3>{{ recipe.title }}</h3>
+                        <p><strong>Автор:</strong> {{ recipe.author?.username || recipe.author }}</p>
+                        <p><strong>Категория:</strong> {{ recipe.category }}</p>
+                        <p><strong>Време:</strong> {{ recipe.time }} мин</p>
+                    </div>
+                    <div class="recipe-actions">
+                        <button (click)="approveRecipe(recipe._id)" class="approve-btn">✅ Одобри</button>
+                        <button (click)="rejectRecipe(recipe._id)" class="reject-btn">❌ Отхвърли</button>
+                        <button (click)="deleteRecipe(recipe._id)" class="delete-btn">🗑️ Изтрий</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Courses Management Section -->
+        <div *ngIf="activeSection === 'courses'" class="admin-section">
+            <h2>📚 Управление на Курсове</h2>
+            <div class="section-header">
+                <button (click)="showEnrollmentsSection()" class="view-enrollments-btn">
+                    👥 Преглед на Записаните Студенти
+                </button>
+            </div>
+            <div class="add-course-form">
+                <h3>Добави нов курс</h3>
+                <div class="form-group">
+                    <label for="courseTitle">Заглавие:</label>
+                    <input type="text" id="courseTitle" [(ngModel)]="newCourse.title"
+                        placeholder="Въведете заглавие на курса">
+                </div>
+                <div class="form-group">
+                    <label for="courseDescription">Описание:</label>
+                    <textarea id="courseDescription" [(ngModel)]="newCourse.description"
+                        placeholder="Въведете описание на курса"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="courseDay">Ден от седмицата:</label>
+                    <select id="courseDay" [(ngModel)]="newCourse.day">
+                        <option value="">Изберете ден</option>
+                        <option value="Понеделник">Понеделник</option>
+                        <option value="Вторник">Вторник</option>
+                        <option value="Сряда">Сряда</option>
+                        <option value="Четвъртък">Четвъртък</option>
+                        <option value="Петък">Петък</option>
+                        <option value="Събота">Събота</option>
+                        <option value="Неделя">Неделя</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="courseTime">Време:</label>
+                    <input type="time" id="courseTime" [(ngModel)]="newCourse.time">
+                </div>
+                <div class="form-group">
+                    <label for="courseDuration">Продължителност (минути):</label>
+                    <input type="number" id="courseDuration" [(ngModel)]="newCourse.duration" min="30" max="300"
+                        placeholder="30-300">
+                </div>
+                <div class="form-group">
+                    <label for="courseMaxStudents">Максимален брой студенти:</label>
+                    <input type="number" id="courseMaxStudents" [(ngModel)]="newCourse.maxStudents" min="1" max="50"
+                        placeholder="1-50">
+                </div>
+                <button (click)="addCourse()" class="add-btn">Добави курс</button>
+            </div>
+            <div class="courses-list">
+                <h3>Съществуващи курсове</h3>
+                <div *ngFor="let course of coursesList" class="course-item">
+                    <div class="course-info">
+                        <h4>{{ course.title }}</h4>
+                        <p><strong>Описание:</strong> {{ course.description }}</p>
+                        <p><strong>Ден:</strong> {{ course.day }}</p>
+                        <p><strong>Време:</strong> {{ course.time }}</p>
+                        <p><strong>Продължителност:</strong> {{ course.duration }} мин</p>
+                        <p><strong>Макс. студенти:</strong> {{ course.maxStudents }}</p>
+                        <p><strong>Записани студенти:</strong> {{ allEnrollments.length > 0 ?
+                            getEnrollmentCountForCourse(course._id) : 0 }} / {{ course.maxStudents }}</p>
+                    </div>
+                    <div class="course-actions">
+                        <button (click)="loadCourseEnrollments(course._id)" class="view-enrollments-btn">
+                            👥 Преглед на Записаните
+                        </button>
+                        <button (click)="editCourse(course._id)" class="edit-btn">✏️ Редактирай</button>
+                        <button (click)="deleteCourse(course._id)" class="delete-btn">🗑️ Изтрий</button>
+                    </div>
+                </div>
+                <div *ngIf="coursesList.length === 0" class="no-courses">
+                    <p>Все още няма добавени курсове.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Course Enrollments Section -->
+        <div *ngIf="activeSection === 'enrollments'" class="admin-section">
+            <h2>👥 Преглед на Записаните Студенти</h2>
+            <div class="section-header">
+                <button (click)="showCoursesSection()" class="back-btn">← Назад към Курсовете</button>
+                <button (click)="refreshEnrollments()" class="refresh-btn">🔄 Обнови</button>
+            </div>
+
+            <!-- All Enrollments Overview -->
+            <div class="enrollments-overview">
+                <h3>Общ преглед на всички записивания</h3>
+                <div class="enrollments-stats">
+                    <p><strong>Общ брой записивания:</strong> {{ allEnrollments.length }}</p>
+                </div>
+                <div class="all-enrollments-list">
+                    <h4>Всички записивания:</h4>
+                    <div *ngFor="let enrollment of allEnrollments" class="enrollment-item">
+                        <div class="enrollment-info">
+                            <p><strong>Студент:</strong> {{ enrollment.username }} ({{ enrollment.email }})</p>
+                            <p><strong>Курс:</strong> {{ enrollment.courseTitle }}</p>
+                            <p><strong>Записан на:</strong> {{ enrollment.enrolledAt }}</p>
+                            <p><strong>Статус:</strong> {{ enrollment.status }}</p>
+                        </div>
+                    </div>
+                    <div *ngIf="allEnrollments.length === 0" class="no-enrollments">
+                        <p>Все още няма записивания в курсове.</p>
+                    </div>
+                </div>
+
+                <!-- Specific Course Enrollments -->
+                <div *ngIf="selectedCourseId && courseEnrollments.length > 0" class="course-specific-enrollments">
+                    <h3>Записани студенти за избрания курс</h3>
+                    <div *ngFor="let enrollment of courseEnrollments" class="enrollment-item">
+                        <div class="enrollment-info">
+                            <p><strong>Студент:</strong> {{ enrollment.username }} ({{ enrollment.email }})</p>
+                            <p><strong>Записан на:</strong> {{ enrollment.enrolledAt }}</p>
+                            <p><strong>Статус:</strong> {{ enrollment.status }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Messages Section -->
+        <div *ngIf="activeSection === 'contact'" class="admin-section">
+            <h2>📧 Управление на Контактни Съобщения</h2>
+            <div class="section-header">
+                <button (click)="showCoursesSection()" class="back-btn">← Назад към Курсовете</button>
+                <button (click)="loadContactMessages()" class="refresh-btn">🔄 Обнови</button>
+            </div>
+
+            <div class="contact-stats">
+                <div class="stat-item">
+                    <h3>Общо съобщения</h3>
+                    <p>{{ contactCount }}</p>
+                </div>
+                <div class="stat-item">
+                    <h3>Нови съобщения</h3>
+                    <p>{{ newContactCount }}</p>
+                </div>
+            </div>
+
+            <div class="contact-messages-list">
+                <div *ngFor="let message of contactMessages" class="contact-message-item">
+                    <div class="message-header">
+                        <div class="message-info">
+                            <h4>{{ message.subject }}</h4>
+                            <p><strong>От:</strong> {{ message.name }} ({{ message.email }})</p>
+                            <p><strong>Тема:</strong> {{ message.topic }}</p>
+                            <p><strong>Изпратено:</strong> {{ message.submittedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+                        </div>
+                        <div class="message-status">
+                            <span [class]="getStatusBadgeClass(message.status)">
+                                {{ getStatusText(message.status) }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="message-content">
+                        <p><strong>Съобщение:</strong></p>
+                        <div class="message-text">{{ message.message }}</div>
+                    </div>
+
+                    <div class="message-actions">
+                        <button (click)="updateContactStatus(message._id, 'read')" *ngIf="message.status === 'new'"
+                            class="action-btn read-btn">
+                            👁️ Маркирай като прочетено
+                        </button>
+                        <button (click)="updateContactStatus(message._id, 'replied')"
+                            *ngIf="message.status !== 'replied'" class="action-btn reply-btn">
+                            💬 Маркирай като отговорено
+                        </button>
+                        <button (click)="updateContactStatus(message._id, 'archived')"
+                            *ngIf="message.status !== 'archived'" class="action-btn archive-btn">
+                            📁 Архивирай
+                        </button>
+                        <button (click)="deleteContactMessage(message._id)" class="action-btn delete-btn">
+                            🗑️ Изтрий
+                        </button>
+                    </div>
+
+                    <div *ngIf="message.adminReply" class="admin-reply">
+                        <h5>Админ отговор:</h5>
+                        <p>{{ message.adminReply }}</p>
+                        <small>Отговорено на: {{ message.repliedAt | date:'dd/MM/yyyy HH:mm' }}</small>
+                    </div>
+                </div>
+
+                <div *ngIf="contactMessages.length === 0" class="no-messages">
+                    <p>Все още няма контактни съобщения.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Course Enrollments Section -->
+        <div *ngIf="activeSection === 'enrollments'" class="admin-section">
+            <h2>📚 Управление на Записите в Курсове</h2>
+            <div class="section-header">
+                <button (click)="showCoursesSection()" class="back-btn">← Назад към Курсовете</button>
+                <button (click)="refreshEnrollments()" class="refresh-btn">🔄 Обнови</button>
+            </div>
+
+            <div class="enrollments-overview">
+                <h3>📊 Преглед на всички записи</h3>
+                <p><strong>Общо записи:</strong> {{ allEnrollments.length }}</p>
+            </div>
+
+            <div *ngIf="allEnrollments.length > 0" class="enrollments-list">
+                <div *ngFor="let enrollment of allEnrollments" class="enrollment-item">
+                    <div class="enrollment-info">
+                        <h4>{{ enrollment.courseTitle || 'Курс' }}</h4>
+                        <p><strong>Студент:</strong> {{ enrollment.studentName || 'Неизвестен' }}</p>
+                        <p><strong>Email:</strong> {{ enrollment.studentEmail || 'Неизвестен' }}</p>
+                        <p><strong>Дата на запис:</strong> {{ enrollment.enrollmentDate | date:'dd/MM/yyyy HH:mm' }}</p>
+                        <p><strong>Статус:</strong>
+                            <span class="status-badge" [class]="'status-' + (enrollment.status || 'active')">
+                                {{ getEnrollmentStatusText(enrollment.status) }}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="enrollment-actions">
+                        <button (click)="viewEnrollmentDetails(enrollment)" class="action-btn view-btn">
+                            👁️ Детайли
+                        </button>
+                        <button (click)="removeEnrollment(enrollment._id)" class="action-btn delete-btn">
+                            🗑️ Премахни
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="allEnrollments.length === 0" class="no-enrollments">
+                <p>Все още няма записи в курсове.</p>
+            </div>
+        </div>
+
+        <!-- Lottery Management Section -->
+        <div *ngIf="activeSection === 'lottery'" class="admin-section">
+            <h2>🎁 Управление на Томболата</h2>
+            <div class="section-header">
+                <button (click)="showCoursesSection()" class="back-btn">← Назад към Курсовете</button>
+                <button (click)="loadLotteryData()" class="refresh-btn">🔄 Обнови</button>
+            </div>
+
+            <div class="lottery-info">
+                <p><strong>Участници:</strong> {{ lotteryParticipants || 0 }}</p>
+                <p><strong>Статус:</strong> {{ lotteryActive ? 'Активна' : 'Неактивна' }}</p>
+
+                <!-- Enhanced lottery details -->
+                <div *ngIf="lotteryData" class="lottery-details">
+                    <h4>🎯 Детайли за томболата</h4>
+                    <p><strong>Име:</strong> {{ lotteryData.name }}</p>
+                    <p><strong>Описание:</strong> {{ lotteryData.description }}</p>
+                    <p><strong>Награда:</strong> {{ lotteryData.prize }}</p>
+                    <p><strong>Макс. участници:</strong> {{ lotteryData.maxParticipants }}</p>
+                    <p><strong>Крайна дата:</strong> {{ lotteryData.endDate | date:'dd/MM/yyyy HH:mm' }}</p>
+
+                    <!-- Participants list -->
+                    <div *ngIf="lotteryData.participants && lotteryData.participants.length > 0"
+                        class="participants-list">
+                        <h5>👥 Списък с участници:</h5>
+                        <div class="participants-grid">
+                            <div *ngFor="let participant of lotteryData.participants" class="participant-item">
+                                <span class="participant-name">{{ participant.username }}</span>
+                                <small class="join-date">{{ participant.joinDate | date:'dd/MM/yyyy' }}</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Winner info -->
+                    <div *ngIf="lotteryData.winner" class="winner-info">
+                        <h5>🏆 Победител:</h5>
+                        <p><strong>{{ lotteryData.winner.username }}</strong></p>
+                    </div>
+                </div>
+
+                <p class="lottery-note">🎯 За пълно управление на томболата, използвайте отделната страница за томбола.
+                </p>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div *ngIf="activeSection === 'stats'" class="admin-section">
+            <h2>📊 Статистика</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>Общо потребители</h3>
+                    <p>{{ userCount }}</p>
+                </div>
+                <div class="stat-item">
+                    <h3>Общо рецепти</h3>
+                    <p>{{ totalRecipes }}</p>
+                </div>
+                <div class="stat-item">
+                    <h3>Рецепти за модерация</h3>
+                    <p>{{ pendingRecipes }}</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Current User Info -->
+    <div class="current-user-info">
+        <h3>Текущ потребител:</h3>
+        <div class="info-item">
+            <strong>Потребителско име: </strong> {{ currentUser?.username }}
+        </div>
+        <div class="info-item">
+            <strong>Имейл: </strong> {{ currentUser?.email }}
+        </div>
+        <div class="info-item">
+            <strong>Роля: </strong> {{ currentUser?.role }}
+        </div>
+        <div class="info-item">
+            <strong>Регистриран на: </strong> {{ currentUser?.created_at?.substring(0, 10) }}
+        </div>
+    </div>
+</div>

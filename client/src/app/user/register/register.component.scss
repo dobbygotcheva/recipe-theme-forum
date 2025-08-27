@@ -1,0 +1,86 @@
+/*login register forms  */
+label{
+    width:30%;
+    color:green;
+}
+form.login, form.register {
+    width: 40%;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin: 2em auto;
+    height: 70vh;
+}
+
+.login fieldset, .register fieldset {
+    border-radius: 0.3em;
+    padding: 0.8em;
+    background-color: #ffffff;
+}
+
+.login h2, .register h2 {
+    padding-top: 0;
+    border-bottom: none;
+    color:#6c8b47;
+}
+
+.login p, .register p {
+    padding-bottom: 0;
+    padding-top: 1.5rem;
+}
+
+.login input, .register input {
+    flex: 0 1 100%;
+    border: 1px solid  green;
+    padding: 0.3em;
+    
+    border-radius: 0.3em;
+
+}
+
+.login select, .register select {
+    border-color: greenyellow;
+}
+
+.login button, .register button {
+    color: white;
+    border: none;
+    border-radius: 0.3em;
+    padding: 0.6em 1.2em;
+    margin-top: 1.5rem;
+    width: 60%;
+    outline: none;
+}
+
+
+
+.login a, .register a {
+    color: green;
+}
+
+.login a:hover, .register a:hover {
+    cursor: pointer;
+}
+
+.register .tel {
+    padding-right: 0.8em;
+}
+
+.login .field, .register .field {
+    display: flex;
+    padding-bottom: 0;
+}
+
+/* errors  */
+
+p.error {
+    text-align: left;
+    border-radius: 0.3em;
+    color: red;
+    padding-top: 0;
+}
+
+.input-error {
+    border-left-color: red;
+}

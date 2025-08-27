@@ -1,0 +1,103 @@
+<div class="container">
+    <form class="new-theme" #form="ngForm" (ngSubmit)="editThemeHandler(form)">
+      <fieldset>
+        <h2>Корегирайте рецепта:</h2>
+    
+  <!-- TITLE -->
+      
+          <label for="title">Заглавие: </label>
+          <input class="input-error" type="title" name="title" id="title" #inputTitle="ngModel" ngModel="{{theme?.title}}" required minlength="2"
+          />
+
+        <ng-container *ngIf="inputTitle.touched">
+          <p class="error" *ngIf="inputTitle.errors?.['required']">
+            Въведете заглавие на пецептата!
+          </p>
+          <p class="error" *ngIf="inputTitle.errors?.['minlength']">
+            Заглавието на рецептата трябва да е поне
+            {{inputTitle.errors?.['minlength']['requiredLength']}} знака!
+          </p>
+        </ng-container>
+  <!-- CATEGORY -->
+
+          <label for="category">Категория: </label>
+          <select id="category" type="text" name="category" id="category" #inputCategory="ngModel"  ngModel="{{theme?.category}}" required >
+            <option *ngFor="let item of categories" [value]="item">
+        {{item}}
+      </option>
+         
+          </select>
+
+        <ng-container *ngIf="inputCategory.touched">
+          <p class="error" *ngIf="inputCategory.errors?.['required']">
+            Въведете категория!
+          </p>
+         
+        </ng-container>
+  <!-- TIME -->
+      
+          <label for="time">Време за приготвяне: </label>
+          <input type="number" name="time" id="time" #inputTime="ngModel" ngModel="{{theme?.time}}" required minlength="1" />
+    
+        <ng-container *ngIf="inputTime.touched">
+          <p class="error" *ngIf="inputTime.errors?.['required']">
+            Въведете време за приготвяне в минути!
+          </p>
+          <p class="error" *ngIf="inputTime.errors?.['minlength']">
+            Времето трябва да е поне един символ!
+            {{inputTime.errors?.['minlength']['requiredLength']}} знака!
+          </p>
+        </ng-container>
+  
+        <!--IMG  -->
+  
+          <label for="img">Снимка: </label>
+          <input type="text" name="img" id="img" #inputImg="ngModel" ngModel="{{theme?.img}}" required minlength="3" />
+       
+        <ng-container *ngIf="inputImg.touched">
+          <p class="error" *ngIf="inputImg.errors?.['required']">
+            Въведете снимка!
+          </p>
+          <p class="error" *ngIf="inputImg.errors?.['minlength']">
+            Снимката трябва да е поне 3 символа!
+            {{inputImg.errors?.['minlength']['requiredLength']}} знака!
+          </p>
+        </ng-container>
+         <!--INGREDIENTS -->
+
+          <label for="ingredients">Необходими продукти: </label>
+          <textarea class="text" type="text" name="ingredients" id="ingredients" #inputIngeredients="ngModel" ngModel="{{theme?.ingredients}}" required minlength="10"></textarea>
+      
+        <ng-container *ngIf="inputIngeredients.touched">
+          <p class="error" *ngIf="inputIngeredients.errors?.['required']">
+            Въведете необходими продукти!
+          </p>
+          <p class="error" *ngIf="inputIngeredients.errors?.['minlength']">
+            Полетето 'Необходими продукти" е поне {{inputIngeredients.errors?.['minlength']['requiredLength']}} знака!
+          </p>
+        </ng-container>
+  
+              <!--TEXT  -->
+ 
+          <label for="text">Начин на приготвяне: </label>
+          <textarea class="text" type="text" name="text" id="text" #inputText="ngModel" ngModel="{{theme?.text}}" required minlength="20" ></textarea>
+   
+        <ng-container *ngIf="inputText.touched">
+          <p class="error" *ngIf="inputText.errors?.['required']">
+            Опишете как се приготвя рецептата!
+          </p>
+          <p class="error" *ngIf="inputText.errors?.['minlength']">
+            Описанието е поне {{inputText.errors?.['minlength']['requiredLength']}} знака!
+          </p>
+        </ng-container>
+  
+        <button
+          [disabled]="form.invalid"
+          [style]="{ backgroundColor: form.invalid ? 'lightgray' : 'lightgreen' }"
+        >
+          Корегирайте рецепта
+        </button>
+      </fieldset>
+    </form>
+
+  </div>

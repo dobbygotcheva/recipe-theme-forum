@@ -1,0 +1,83 @@
+<div class="notifications-page">
+  <div class="page-header">
+    <h1>Notifications</h1>
+    <div class="header-actions">
+      <button 
+        class="mark-all-read-btn" 
+        (click)="markAllAsRead()"
+        *ngIf="getUnreadCount() > 0"
+      >
+        <span class="material-symbols-outlined">done_all</span>
+        Mark all as read
+      </button>
+      <button class="refresh-btn" (click)="loadNotifications(true)">
+        <span class="material-symbols-outlined">refresh</span>
+        Refresh
+      </button>
+    </div>
+  </div>
+
+  <div class="notifications-container">
+    <div *ngIf="isLoading && notifications.length === 0" class="loading">
+      <span class="material-symbols-outlined rotating">refresh</span>
+      Loading notifications...
+    </div>
+
+    <div *ngIf="!isLoading && notifications.length === 0" class="no-notifications">
+      <span class="material-symbols-outlined">notifications_off</span>
+      <h3>No notifications yet</h3>
+      <p>You'll see notifications here when someone comments on your recipes, rates them, or when there's important news.</p>
+    </div>
+
+    <div *ngIf="notifications.length > 0" class="notifications-list">
+      <div 
+        *ngFor="let notification of notifications" 
+        class="notification-card"
+        [class.unread]="!notification.read"
+        (click)="markAsRead(notification)"
+      >
+        <div class="notification-icon" [style.background-color]="getNotificationColor(notification.type)">
+          <span class="material-symbols-outlined">{{ getNotificationIcon(notification.type) }}</span>
+        </div>
+        
+        <div class="notification-content">
+          <p class="notification-message">{{ notification.data.message }}</p>
+          
+          <!-- Show admin's reply for contact_reply notifications -->
+          <div *ngIf="notification.type === 'contact_reply' && notification.data.adminReply" class="admin-reply">
+            <p class="reply-label">👨‍🍳 Отговор от Готвача:</p>
+            <p class="reply-content">{{ notification.data.adminReply }}</p>
+            <button class="view-full-reply-btn" (click)="viewFullReply(notification)">
+              📖 Виж пълния отговор
+            </button>
+          </div>
+          
+          <span class="notification-time">{{ getTimeAgo(notification.created_at) }}</span>
+        </div>
+
+        <div class="notification-actions">
+          <button 
+            class="delete-btn" 
+            (click)="deleteNotification(notification._id); $event.stopPropagation()"
+            title="Delete notification"
+          >
+            <span class="material-symbols-outlined">delete</span>
+          </button>
+        </div>
+
+        <div class="unread-indicator" *ngIf="!notification.read"></div>
+      </div>
+    </div>
+
+    <div *ngIf="hasMore && !isLoading" class="load-more">
+      <button class="load-more-btn" (click)="loadMore()">
+        Load more notifications
+      </button>
+    </div>
+
+    <div *ngIf="isLoading && notifications.length > 0" class="loading-more">
+      <span class="material-symbols-outlined rotating">refresh</span>
+      Loading more...
+    </div>
+  </div>
+</div>

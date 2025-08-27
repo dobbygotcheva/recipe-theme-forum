@@ -1,0 +1,135 @@
+<div class="contact-container">
+  <div class="contact-header">
+    <div class="chef-avatar">
+      <img src="assets/chef-photo.jpg" alt="Chef Avatar">
+    </div>
+    <div class="header-content">
+      <h1>👨‍🍳 Свържете се с Готвача</h1>
+      <p>Имате въпроси за готвенето? Искате да научите повече за моята книга или курсове? Не се колебайте да се свържете
+        с мен!</p>
+    </div>
+  </div>
+
+  <div class="contact-form-container">
+    <div class="form-card">
+      <h2>📝 Форма за контакт</h2>
+
+      <!-- Success Message -->
+      <div *ngIf="submitSuccess" class="success-message">
+        <div class="success-icon">✅</div>
+        <div class="success-text">
+          <h3>Съобщението е изпратено успешно!</h3>
+          <p>Благодарим ви за обратната връзка. Ще се свържа с вас скоро!</p>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="submitError" class="error-message">
+        <div class="error-icon">❌</div>
+        <div class="error-text">
+          <p>{{ submitError }}</p>
+        </div>
+      </div>
+
+      <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="contact-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Име *</label>
+            <input type="text" id="name" formControlName="name" placeholder="Въведете вашето име"
+              [class.error]="contactForm.get('name')?.invalid && contactForm.get('name')?.touched">
+            <div class="error-message" *ngIf="getFieldError('name')">
+              {{ getFieldError('name') }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Имейл адрес *</label>
+            <input type="email" id="email" formControlName="email" placeholder="Въведете вашия имейл"
+              [class.error]="contactForm.get('email')?.invalid && contactForm.get('email')?.touched">
+            <div class="error-message" *ngIf="getFieldError('email')">
+              {{ getFieldError('email') }}
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="topic">Тема на запитването</label>
+          <select id="topic" formControlName="topic">
+            <option value="general">Общи въпроси</option>
+            <option value="cooking">Готвене и рецепти</option>
+            <option value="book">Моята книга</option>
+            <option value="courses">Курсове и обучения</option>
+            <option value="tips">Съвети за готвене</option>
+            <option value="other">Друго</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="subject">Заглавие *</label>
+          <input type="text" id="subject" formControlName="subject" placeholder="Кратко описание на вашето запитване"
+            [class.error]="contactForm.get('subject')?.invalid && contactForm.get('subject')?.touched">
+          <div class="error-message" *ngIf="getFieldError('subject')">
+            {{ getFieldError('subject') }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="message">Съобщение *</label>
+          <textarea id="message" formControlName="message" rows="6"
+            placeholder="Опишете подробно вашето запитване или въпрос..."
+            [class.error]="contactForm.get('message')?.invalid && contactForm.get('message')?.touched"></textarea>
+          <div class="error-message" *ngIf="getFieldError('message')">
+            {{ getFieldError('message') }}
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="submit-btn" [disabled]="isSubmitting || contactForm.invalid">
+            <span *ngIf="!isSubmitting">📤 Изпрати съобщение</span>
+            <span *ngIf="isSubmitting">⏳ Изпращане...</span>
+          </button>
+
+          <button type="button" class="reset-btn" (click)="resetForm()" [disabled]="isSubmitting">
+            🔄 Изчисти формата
+          </button>
+
+          <button type="button" class="history-btn" (click)="goToHistory()" [disabled]="isSubmitting">
+            📧 История на съобщенията
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="contact-info">
+      <div class="info-card">
+        <h3>📞 Други начини за връзка</h3>
+        <div class="contact-methods">
+          <div class="contact-method">
+            <div class="method-icon">📧</div>
+            <div class="method-details">
+              <h4>Имейл</h4>
+              <p>chef@zloiadkovcii.com</p>
+            </div>
+          </div>
+
+          <div class="contact-method">
+            <div class="method-icon">📱</div>
+            <div class="method-details">
+              <h4>Социални мрежи</h4>
+              <p>Следвайте ме за най-новите рецепти</p>
+              <p class="social-handle">@MandjevGotvi</p>
+            </div>
+          </div>
+
+          <div class="contact-method">
+            <div class="method-icon">📚</div>
+            <div class="method-details">
+              <h4>Курсове</h4>
+              <p>Присъединете се към моите готварски курсове</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

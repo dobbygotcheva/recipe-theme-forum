@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Running pre-commit checks..."
+
+# Run linting and formatting checks
+cd client && npm run lint:fix && npm run format
+cd ../server && npm run lint:fix && npm run format
+
+echo "✅ Pre-commit checks completed!"

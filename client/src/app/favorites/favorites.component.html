@@ -1,0 +1,65 @@
+<div class="container">
+  <h3>Моите любими рецепти</h3>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading">
+    <p>Зареждане на любимите рецепти...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="hasError" class="error">
+    <p>{{ errorMessage }}</p>
+    <button (click)="retryLoad()"
+      style="padding: 10px 20px; background-color: #6c8b47; color: white; border: none; border-radius: 5px; cursor: pointer;">
+      Опитайте отново
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!isLoading && !hasError">
+    <!-- No Favorites Message -->
+    <div *ngIf="favorites.length === 0" class="no-favorites">
+      <div class="heart-icon">❤️</div>
+      <p>Все още нямате любими рецепти.</p>
+      <p>Разгледайте рецептите и добавете тези, които харесвате!</p>
+      <a routerLink="/themes" class="browse-link">Разгледай рецепти</a>
+    </div>
+
+    <!-- Favorites List -->
+    <ul class="cards" *ngIf="favorites.length > 0">
+      <li class="card" *ngFor="let post of favorites">
+        <div class="favorite-button">
+          <button (click)="removeFromFavorites(post._id)" class="remove-favorite-btn" title="Премахни от любими">
+            ❌
+          </button>
+        </div>
+
+        <img [src]="post.img || 'assets/logo.jpg'" [alt]="(post.title || 'Recipe') | uppercase"
+          (error)="onImageError($event)" onerror="this.onerror=null; this.src='assets/logo.jpg';" />
+        <h6>{{ post.title || 'Без заглавие' }}</h6>
+        <span class="created">
+          Публикувана: {{ (post.created_at || defaultDate) | date:'dd.MM.y' }}
+        </span>
+        <p class="time">
+          <span class="material-symbols-outlined">schedule</span>
+          Време на приготвяне в минути: {{ post.time || 0 }}
+        </p>
+
+        <!-- Rating Display -->
+        <div class="rating-display">
+          <span class="rating-text">Рейтинг: {{ (post.averageRating || 0) | number:'1.1-1' }} / 5</span>
+          <div class="stars-display">
+            <span *ngFor="let star of [1,2,3,4,5]" class="star {{ getStarClass(post.averageRating || 0, star) }}">
+              ★
+            </span>
+          </div>
+          <span class="rating-count">({{ post.totalRatings || 0 }} оценки)</span>
+        </div>
+
+        <p>Съставки: {{ post.ingredients || 'Няма информация за съставките' }}</p>
+        <p>Начин на приготвяне: {{ post.text || 'Няма информация за начина на приготвяне' }}</p>
+        <a [routerLink]="['/theme', post._id]">Вижте цялата рецепта...</a>
+      </li>
+    </ul>
+  </div>
+</div>

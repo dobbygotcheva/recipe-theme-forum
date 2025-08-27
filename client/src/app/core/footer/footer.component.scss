@@ -1,0 +1,24 @@
+footer {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    color: white;
+    padding: 10px;
+    background-color: #cccccc;
+    align-items: center;
+    z-index: -1;
+     
+}
+
+a {
+
+    text-decoration: none;
+    color: lightgreen;
+}
+
+a:hover {
+    color:#6c8b47;
+}
+footer p{
+    text-align: center;
+}

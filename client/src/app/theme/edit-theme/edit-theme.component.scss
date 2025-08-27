@@ -1,0 +1,109 @@
+
+form.new-theme {
+    display: flex;
+    flex-direction: row;
+
+    flex-wrap: wrap;
+    min-width: 360px;
+
+    display:flex;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+    margin: 2em auto;
+    height: 77vh;
+    z-index: 1;
+}
+
+.new-theme fieldset {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    border-radius: 0.3em;
+    padding: 0.8em;
+    // background-color: lemonchiffon;
+    border:none;
+    background-color: antiquewhite;
+    z-index: 1;
+}
+
+.new-theme h2 {
+    padding-top: 0;
+    border-bottom: none;
+    color: #6c8b47;
+}
+
+.new-theme p {
+    padding-bottom: 0;
+    padding-top: 1.5rem;
+}
+
+.new-theme input {
+    flex: 0 1 100%;
+    border: 1px solid green;
+    padding: 0.3em;
+  width: 360px;
+    border-radius: 0.3em;
+  
+}
+
+.new-theme select {
+    border-color:green;
+}
+
+.new-theme button{
+    color: white;
+    border: none;
+    border-radius: 0.5em;
+    padding: 0.6em 1.2em;
+    margin-top: 1.5rem;
+    width: 60%;
+    outline: none;
+}
+
+
+
+.new-theme a {
+    color: green;
+}
+
+.new-theme a:hover {
+    cursor: pointer;
+}
+.ingredients{
+    width: 360px;
+    height: 160px;
+}
+textarea{
+    border-radius: 0.5em;
+}
+
+
+.new-theme .field {
+    display: flex;
+    padding-bottom: 0;
+}
+
+/* errors  */
+
+p.error {
+    text-align: left;
+    border-radius: 0.3em;
+    color: red;
+    padding-top: 0;
+}
+
+.text{
+    width: 360px;
+    height: 250px;
+}
+.new-theme label {
+
+    color:green;
+    width: 150px;
+}
+.input-field{
+    display: inline-block;
+ 
+}
