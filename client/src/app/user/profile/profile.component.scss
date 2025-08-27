@@ -1,0 +1,663 @@
+.container {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.profile-container {
+  max-width: 800px;
+  width: 100%;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+// Profile Header
+.profile-header {
+  display: flex;
+  align-items: center;
+  padding: 40px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  gap: 30px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    text-align: center;
+    gap: 20px;
+  }
+}
+
+.avatar-section {
+  position: relative;
+}
+
+.avatar-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.8);
+    transform: scale(1.05);
+  }
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.avatar-upload-btn {
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: white;
+    transform: scale(1.1);
+  }
+
+  .material-symbols-outlined {
+    color: #667eea;
+    font-size: 20px;
+  }
+}
+
+.avatar-upload-section {
+  margin-top: 20px;
+}
+
+.file-upload {
+  margin-bottom: 15px;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px dashed rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.8);
+  }
+
+  .material-symbols-outlined {
+    font-size: 18px;
+  }
+}
+
+.avatar-preview {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.preview-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(255, 255, 255, 0.5);
+  margin-bottom: 10px;
+}
+
+.preview-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.upload-btn, .cancel-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+
+  .material-symbols-outlined {
+    font-size: 16px;
+  }
+}
+
+.upload-btn {
+  background: #28a745;
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: #218838;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.cancel-btn {
+  background: #dc3545;
+  color: white;
+
+  &:hover {
+    background: #c82333;
+  }
+}
+
+.profile-info {
+  flex: 1;
+
+  h2 {
+    margin: 0 0 10px 0;
+    font-size: 2.5rem;
+    font-weight: 700;
+  }
+
+  .email, .bio, .phone {
+    margin: 5px 0;
+    opacity: 0.9;
+  }
+
+  .bio {
+    font-style: italic;
+    max-width: 400px;
+  }
+}
+
+.profile-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
+}
+
+.edit-btn, .password-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  font-weight: 500;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: translateY(-2px);
+  }
+
+  .material-symbols-outlined {
+    font-size: 18px;
+  }
+}
+
+// Profile Edit Section
+.profile-edit-section, .password-change-section {
+  padding: 40px;
+  border-bottom: 1px solid #eee;
+
+  h3 {
+    margin: 0 0 30px 0;
+    color: #333;
+    font-size: 1.8rem;
+    font-weight: 600;
+  }
+}
+
+.profile-form, .password-form {
+  max-width: 600px;
+}
+
+.form-group {
+  margin-bottom: 25px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.form-input, .form-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background: #f8f9fa;
+
+  &:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+
+  &.error {
+    border-color: #dc3545;
+    background: #fff5f5;
+  }
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+}
+
+.char-count {
+  text-align: right;
+  font-size: 12px;
+  color: #666;
+  margin-top: 5px;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+// Preferences Section
+.preferences-section {
+  margin-top: 30px;
+  padding: 25px;
+  background: #f8f9fa;
+  border-radius: 12px;
+
+  h4 {
+    margin: 0 0 20px 0;
+    color: #333;
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
+}
+
+.preferences-group {
+  margin-bottom: 25px;
+
+  h5 {
+    margin: 0 0 15px 0;
+    color: #555;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+}
+
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  padding: 8px 0;
+
+  input[type="checkbox"] {
+    display: none;
+  }
+
+  .checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    position: relative;
+    transition: all 0.3s ease;
+    background: white;
+  }
+
+  input[type="checkbox"]:checked + .checkmark {
+    background: #667eea;
+    border-color: #667eea;
+
+    &:after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+    }
+  }
+
+  &:hover .checkmark {
+    border-color: #667eea;
+  }
+}
+
+// Form Actions
+.form-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.save-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    background: #5a6fd8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .material-symbols-outlined {
+    font-size: 18px;
+  }
+}
+
+// Recipes Section
+.recipes-section {
+  padding: 40px;
+  border-bottom: 1px solid #eee;
+
+  h3 {
+    margin: 0 0 30px 0;
+    color: #333;
+    font-size: 1.8rem;
+    font-weight: 600;
+  }
+}
+
+.no-recipes {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+
+  .cat {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 20px;
+    position: relative;
+  }
+
+  p {
+    font-size: 1.1rem;
+    margin: 0;
+  }
+}
+
+.recipes-list {
+  display: grid;
+  gap: 15px;
+  max-width: 600px;
+}
+
+.recipe-item {
+  background: #f8f9fa;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.recipe-link {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.recipe-number {
+  font-size: 12px;
+  color: #6c8b47;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.recipe-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+// Favorites Section
+.favorites-section {
+  padding: 40px;
+  border-bottom: 1px solid #eee;
+
+  h3 {
+    margin: 0 0 30px 0;
+    color: #333;
+    font-size: 1.8rem;
+    font-weight: 600;
+  }
+}
+
+.no-favorites {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+
+  .heart-icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+  }
+
+  p {
+    font-size: 1.1rem;
+    margin: 0 0 15px 0;
+  }
+
+  .browse-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #6c8b47;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: #5a7a3a;
+    }
+  }
+}
+
+.favorites-list {
+  display: grid;
+  gap: 15px;
+  max-width: 600px;
+}
+
+.favorite-item {
+  background: #fff5f5;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border-left: 4px solid #ff6b6b;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.favorite-link {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.favorite-number {
+  font-size: 12px;
+  color: #ff6b6b;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.favorite-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+// Cat Animation (keeping the original cat styles)
+.cat {
+  width: 100px;
+  height: 100px;
+  position: relative;
+  margin: 0 auto;
+}
+
+.ear {
+  position: absolute;
+  top: -10px;
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 30px solid #f39c12;
+}
+
+.ear--left {
+  left: 10px;
+  transform: rotate(-30deg);
+}
+
+.ear--right {
+  right: 10px;
+  transform: rotate(30deg);
+}
+
+.face {
+  width: 80px;
+  height: 80px;
+  background: #f39c12;
+  border-radius: 50%;
+  position: relative;
+  margin: 0 auto;
+}
+
+.eye {
+  position: absolute;
+  top: 20px;
+  width: 12px;
+  height: 12px;
+  background: #2c3e50;
+  border-radius: 50%;
+}
+
+.eye--left {
+  left: 20px;
+}
+
+.eye--right {
+  right: 20px;
+}
+
+.eye-pupil {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+}
+
+.muzzle {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 10px;
+  background: #e67e22;
+  border-radius: 50%;
+}

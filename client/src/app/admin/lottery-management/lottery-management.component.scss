@@ -1,0 +1,439 @@
+.lottery-management-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 15px;
+  color: white;
+
+  h2 {
+    margin-bottom: 10px;
+    font-size: 2.5rem;
+    
+    i {
+      color: #ffd700;
+      margin-right: 15px;
+    }
+  }
+
+  p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin: 0;
+  }
+}
+
+.loading-container {
+  text-align: center;
+  padding: 50px;
+  color: #666;
+
+  .spinner-border {
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 20px;
+  }
+
+  p {
+    font-size: 1.2rem;
+    margin: 0;
+  }
+}
+
+.lottery-info {
+  .info-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    overflow: hidden;
+
+    .card-header {
+      background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+      padding: 20px;
+      border-bottom: 1px solid #dee2e6;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      h3 {
+        margin: 0;
+        color: #495057;
+        font-size: 1.5rem;
+      }
+
+      .btn {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+      }
+    }
+
+    .card-body {
+      padding: 25px;
+
+      .info-row {
+        display: flex;
+        margin-bottom: 15px;
+        padding: 10px 0;
+        border-bottom: 1px solid #f8f9fa;
+
+        &:last-child {
+          border-bottom: none;
+          margin-bottom: 0;
+        }
+
+        label {
+          font-weight: 600;
+          color: #495057;
+          min-width: 150px;
+          margin-right: 20px;
+        }
+
+        span {
+          color: #6c757d;
+          flex: 1;
+
+          &.status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+
+            &.active {
+              background: #d4edda;
+              color: #155724;
+            }
+
+            &.inactive {
+              background: #f8d7da;
+              color: #721c24;
+            }
+          }
+
+          &.winner-name {
+            color: #28a745;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+}
+
+.edit-form {
+  .form-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin-bottom: 30px;
+
+    h4 {
+      margin-bottom: 25px;
+      color: #495057;
+      font-size: 1.3rem;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #495057;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+
+        &:focus {
+          outline: none;
+          border-color: #667eea;
+          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        &.is-invalid {
+          border-color: #dc3545;
+        }
+      }
+
+      textarea.form-control {
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      .invalid-feedback {
+        display: block;
+        color: #dc3545;
+        font-size: 0.9rem;
+        margin-top: 5px;
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 30px;
+
+      .btn {
+        padding: 12px 25px;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 120px;
+
+        &:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        i {
+          margin-right: 8px;
+        }
+      }
+    }
+  }
+}
+
+.actions-section {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  padding: 25px;
+  margin-bottom: 30px;
+  text-align: center;
+
+  .action-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    .btn {
+      padding: 15px 30px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 200px;
+
+      &:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      i {
+        margin-right: 10px;
+      }
+
+      &.btn-success {
+        background: linear-gradient(45deg, #28a745, #20c997);
+        color: white;
+      }
+
+      &.btn-warning {
+        background: linear-gradient(45deg, #ffc107, #fd7e14);
+        color: white;
+      }
+    }
+  }
+}
+
+.participants-section {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  padding: 25px;
+  margin-bottom: 30px;
+
+  h4 {
+    margin-bottom: 20px;
+    color: #495057;
+    font-size: 1.3rem;
+    text-align: center;
+
+    i {
+      color: #667eea;
+      margin-right: 10px;
+    }
+  }
+
+  .participants-table {
+    overflow-x: auto;
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0;
+
+      th, td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #dee2e6;
+      }
+
+      th {
+        background: #f8f9fa;
+        font-weight: 600;
+        color: #495057;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      td {
+        color: #6c757d;
+        vertical-align: middle;
+
+        &:first-child {
+          font-weight: 600;
+          color: #667eea;
+          text-align: center;
+        }
+      }
+
+      tbody tr {
+        transition: background-color 0.3s ease;
+
+        &:hover {
+          background-color: #f8f9fa;
+        }
+      }
+    }
+  }
+}
+
+.message-container {
+  margin: 20px 0;
+
+  .alert {
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+
+    i {
+      margin-right: 10px;
+      font-size: 1.2rem;
+    }
+
+    &.alert-danger {
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+
+    &.alert-success {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .lottery-management-container {
+    padding: 15px;
+  }
+
+  .header h2 {
+    font-size: 2rem;
+  }
+
+  .info-card .card-body .info-row {
+    flex-direction: column;
+
+    label {
+      min-width: auto;
+      margin-bottom: 5px;
+    }
+  }
+
+  .edit-form .form-card {
+    padding: 20px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    align-items: center;
+
+    .btn {
+      width: 100%;
+      max-width: 200px;
+    }
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
+
+    .btn {
+      width: 100%;
+      max-width: 300px;
+    }
+  }
+
+  .participants-table {
+    .table {
+      font-size: 0.9rem;
+
+      th, td {
+        padding: 8px 10px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 15px;
+
+    h2 {
+      font-size: 1.8rem;
+    }
+
+    p {
+      font-size: 1rem;
+    }
+  }
+
+  .info-card .card-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+}

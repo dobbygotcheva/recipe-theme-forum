@@ -1,0 +1,50 @@
+<header class="admin-header">
+  <div class="header-content">
+    <div class="logo-section">
+      <h1>Admin Panel</h1>
+      <button (click)="goToMainSite()" class="main-site-btn">
+        <span class="material-symbols-outlined">home</span>
+        Main Site
+      </button>
+    </div>
+
+    <div
+      style="background-color: #ff0000; color: white; padding: 10px; margin-bottom: 20px; text-align: center; font-weight: bold; border-radius: 8px;">
+      🔍 LOOK HERE FOR COURSE SCHEDULES LINK! 🔍
+    </div>
+    <nav class="admin-nav">
+      <a routerLink="/admin/users" routerLinkActive="active" class="nav-link">
+        <span class="material-symbols-outlined">manage_accounts</span>
+        Users
+      </a>
+      <a routerLink="/admin/moderation" routerLinkActive="active" class="nav-link">
+        <span class="material-symbols-outlined">moderate</span>
+        Moderation
+      </a>
+      <a routerLink="/admin/news" routerLinkActive="active" class="nav-link">
+        <span class="material-symbols-outlined">article</span>
+        News
+      </a>
+      <a routerLink="/admin/courses" routerLinkActive="active" class="nav-link"
+        style="background-color: #ffeb3b; color: #000;">
+        <span class="material-symbols-outlined">schedule</span>
+        Course Schedules (DEBUG)
+      </a>
+      <a routerLink="/news" class="nav-link external">
+        <span class="material-symbols-outlined">visibility</span>
+        View Public News
+      </a>
+    </nav>
+
+    <div class="user-section">
+      <a routerLink="/admin" class="profile-link">
+        <span class="material-symbols-outlined">account_circle</span>
+        Profile
+      </a>
+      <button (click)="logout()" class="logout-btn">
+        <span class="material-symbols-outlined">logout</span>
+        Logout
+      </button>
+    </div>
+  </div>
+</header>

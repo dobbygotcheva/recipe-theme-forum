@@ -1,0 +1,115 @@
+<div class="user-management">
+  <div class="page-header">
+    <h1>User Management</h1>
+    <button (click)="loadUsers()" class="refresh-btn">
+      <span class="material-symbols-outlined">refresh</span>
+      Refresh
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading">
+    <p>Loading users...</p>
+  </div>
+
+  <!-- User Management Content -->
+  <div *ngIf="!isLoading" class="management-content">
+    <!-- Filters -->
+    <div class="filters">
+      <div class="search-box">
+        <span class="material-symbols-outlined">search</span>
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm" 
+          placeholder="Search users by username or email..."
+          class="search-input"
+        >
+      </div>
+      
+      <div class="role-filter">
+        <label for="role-select">Filter by role:</label>
+        <select id="role-select" [(ngModel)]="selectedRole" class="role-select">
+          <option value="all">All Roles</option>
+          <option value="admin">Admin</option>
+          <option value="user">User</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="users-table">
+      <table>
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Joined</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of filteredUsers" class="user-row">
+            <td class="user-info">
+              <div class="user-avatar">
+                <img [src]="user.avatar || 'assets/profile.png'" [alt]="user.username">
+              </div>
+              <div class="user-details">
+                <span class="username">{{ user.username }}</span>
+                <span class="user-id">ID: {{ user._id }}</span>
+              </div>
+            </td>
+            <td>{{ user.email }}</td>
+            <td>
+              <span class="role-badge" [ngClass]="getRoleBadgeClass(user.role)">
+                {{ user.role || 'user' }}
+              </span>
+            </td>
+            <td>{{ user.created_at | date:'short' }}</td>
+            <td class="actions">
+              <div class="action-buttons">
+                <select 
+                  [value]="user.role || 'user'" 
+                  (change)="updateUserRole(user._id, $event)"
+                  class="role-select-small"
+                >
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
+                </select>
+                
+                <button 
+                  (click)="deleteUser(user._id)" 
+                  class="delete-btn"
+                  title="Delete user"
+                >
+                  <span class="material-symbols-outlined">delete</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- No Users Message -->
+      <div *ngIf="filteredUsers.length === 0" class="no-users">
+        <p>No users found matching your criteria.</p>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="summary">
+      <div class="summary-item">
+        <span class="summary-label">Total Users:</span>
+        <span class="summary-value">{{ users.length }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Admins:</span>
+        <span class="summary-value">{{ getAdminCount() }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Regular Users:</span>
+        <span class="summary-value">{{ getRegularUserCount() }}</span>
+      </div>
+    </div>
+  </div>
+</div>

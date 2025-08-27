@@ -1,0 +1,72 @@
+<div class="recipe-management">
+  <!-- My Recipes Section -->
+  <div class="recipes-section">
+    <div class="section-header">
+      <h2>📝 Моите рецепти</h2>
+      <button (click)="createNewRecipe()" class="create-btn">➕ Нова рецепта</button>
+    </div>
+
+    <div *ngIf="recipes.length === 0" class="empty-state">
+      <div class="empty-icon">📝</div>
+      <h3>Нямате рецепти</h3>
+      <p>Създайте първата си рецепта!</p>
+      <button (click)="createNewRecipe()" class="create-btn">➕ Създайте рецепта</button>
+    </div>
+
+    <div *ngIf="recipes.length > 0" class="recipes-grid">
+      <div *ngFor="let recipe of recipes" class="recipe-card" [class]="'status-' + recipe.status">
+        <div class="recipe-header">
+          <h3>{{ recipe.title }}</h3>
+          <span class="status-badge" [class]="'status-' + recipe.status">
+            {{ getStatusText(recipe.status) }}
+          </span>
+        </div>
+
+        <div class="recipe-content">
+          <p class="recipe-description">{{ recipe.description }}</p>
+          <div class="recipe-meta">
+            <span class="category">🏷️ {{ recipe.category }}</span>
+            <span class="date">📅 {{ formatDate(recipe.created_at) }}</span>
+          </div>
+
+          <!-- Nutritional Information -->
+          <div class="nutritional-info" *ngIf="recipe.protein || recipe.fats || recipe.carbs || recipe.calories">
+            <h4>🥗 Хранителна информация</h4>
+            <div class="nutritional-grid">
+              <div class="nutrition-item" *ngIf="recipe.calories">
+                <span class="nutrition-icon">🔥</span>
+                <span class="nutrition-value">{{ recipe.calories }} kcal</span>
+              </div>
+              <div class="nutrition-item" *ngIf="recipe.protein">
+                <span class="nutrition-icon">💪</span>
+                <span class="nutrition-value">{{ recipe.protein }}g протеини</span>
+              </div>
+              <div class="nutrition-item" *ngIf="recipe.fats">
+                <span class="nutrition-icon">🥑</span>
+                <span class="nutrition-value">{{ recipe.fats }}g мазнини</span>
+              </div>
+              <div class="nutrition-item" *ngIf="recipe.carbs">
+                <span class="nutrition-icon">🍞</span>
+                <span class="nutrition-value">{{ recipe.carbs }}g въглехидрати</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="recipe-actions">
+          <button (click)="viewRecipe(recipe._id)" class="action-btn view-btn">
+            👁️ Преглед
+          </button>
+
+          <button (click)="editRecipe(recipe._id)" class="action-btn edit-btn">
+            ✏️ Редактирай
+          </button>
+
+          <button (click)="deleteRecipe(recipe._id)" class="action-btn delete-btn">
+            🗑️ Изтрий
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

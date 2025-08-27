@@ -1,0 +1,306 @@
+<!-- SIMPLE TEST COMPONENT -->
+<div
+  style="background-color: #ff0000; color: white; padding: 50px; text-align: center; font-size: 32px; font-weight: bold; border: 10px solid #00ff00;">
+  🎯 SIMPLE TEST COMPONENT LOADED! 🎯
+  <br><br>
+  <p style="font-size: 18px;">If you can see this, the component is working!</p>
+  <br>
+  <button
+    style="background-color: #00ff00; color: black; padding: 20px; font-size: 24px; border: none; border-radius: 10px; cursor: pointer;"
+    (click)="testClick()">
+    🧪 TEST BUTTON - CLICK ME!
+  </button>
+  <br><br>
+  <p style="font-size: 16px;">Component loaded at: {{ getCurrentTime() }}</p>
+</div>
+
+<!-- ORIGINAL COMPONENT CONTENT -->
+<div class="course-schedule-management">
+  <div class="header">
+    <h2>Управление на седмични курсове по готвене</h2>
+    <button class="btn btn-primary" (click)="showCreateForm = !showCreateForm; showEditForm = false; resetForm()"
+      [disabled]="loading">
+      <i class="fas fa-plus"></i> Създай нов курс
+    </button>
+  </div>
+
+  <!-- Create/Edit Form -->
+  <div class="form-container" *ngIf="showCreateForm || showEditForm">
+    <div class="card">
+      <div class="card-header">
+        <h4>{{ editingSchedule ? 'Редактирай курс' : 'Създай нов курс' }}</h4>
+        <button class="btn btn-sm btn-outline-secondary" (click)="resetForm()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="courseForm" (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="title">Заглавие на курса *</label>
+                <input type="text" id="title" class="form-control" formControlName="title"
+                  placeholder="Въведете заглавие на курса">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="instructorId">Инструктор *</label>
+                <select id="instructorId" class="form-control" formControlName="instructorId">
+                  <option value="">Изберете инструктор</option>
+                  <option *ngFor="let user of users" [value]="user._id">
+                    {{ user.username }}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="description">Описание</label>
+            <textarea id="description" class="form-control" rows="3" formControlName="description"
+              placeholder="Описание на курса"></textarea>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="weekStartDate">Начало на седмицата *</label>
+                <input type="date" id="weekStartDate" class="form-control" formControlName="weekStartDate">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="weekEndDate">Край на седмицата *</label>
+                <input type="date" id="weekEndDate" class="form-control" formControlName="weekEndDate">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="price">Цена (лв.)</label>
+                <input type="number" id="price" class="form-control" formControlName="price" placeholder="0.00">
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="maxParticipants">Максимален брой участници</label>
+                <input type="number" id="maxParticipants" class="form-control" formControlName="maxParticipants"
+                  placeholder="Неограничен">
+              </div>
+            </div>
+          </div>
+
+          <!-- Weekly Courses -->
+          <div class="courses-section">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5>Седмични занятия</h5>
+              <button type="button" class="btn btn-sm btn-outline-primary" (click)="addCourse()">
+                <i class="fas fa-plus"></i> Добави занятие
+              </button>
+            </div>
+
+            <div formArrayName="courses" class="courses-list">
+              <div *ngFor="let course of coursesArray.controls; let i = index" [formGroupName]="i"
+                class="course-item card mb-3">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h6>Занятие {{ i + 1 }}</h6>
+                    <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeCourse(i)">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label>Ден от седмицата *</label>
+                        <select class="form-control" formControlName="dayOfWeek">
+                          <option value="">Изберете ден</option>
+                          <option *ngFor="let day of weekDays" [value]="day.value">
+                            {{ day.label }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <div class="form-group">
+                        <label>Начало *</label>
+                        <input type="time" class="form-control" formControlName="startTime">
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <div class="form-group">
+                        <label>Край *</label>
+                        <input type="time" class="form-control" formControlName="endTime">
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <div class="form-group">
+                        <label>Продължителност (мин.) *</label>
+                        <input type="number" class="form-control" formControlName="duration">
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label>Ниво *</label>
+                        <select class="form-control" formControlName="difficulty">
+                          <option *ngFor="let diff of difficulties" [value]="diff.value">
+                            {{ diff.label }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label>Заглавие на занятието *</label>
+                        <input type="text" class="form-control" formControlName="title" placeholder="Заглавие">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label>Рецепта (по желание)</label>
+                        <select class="form-control" formControlName="recipeId">
+                          <option value="">Без рецепта</option>
+                          <option *ngFor="let theme of themes" [value]="theme._id">
+                            {{ theme.title }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Описание на занятието</label>
+                    <textarea class="form-control" rows="2" formControlName="description"
+                      placeholder="Описание"></textarea>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label>Материали</label>
+                        <input type="text" class="form-control" formControlName="materials"
+                          placeholder="Материали, разделени със запетая">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label>Бележки</label>
+                        <input type="text" class="form-control" formControlName="notes"
+                          placeholder="Допълнителни бележки">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="!courseForm.valid || loading">
+              <i class="fas fa-save"></i> {{ editingSchedule ? 'Обнови' : 'Създай' }}
+            </button>
+            <button type="button" class="btn btn-secondary ml-2" (click)="resetForm()">
+              Отказ
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Course Schedules List -->
+  <div class="schedules-list" *ngIf="!showCreateForm && !showEditForm">
+    <div class="card">
+      <div class="card-header">
+        <h4>Съществуващи курсове</h4>
+      </div>
+      <div class="card-body">
+        <div *ngIf="loading" class="text-center">
+          <div class="spinner-border" role="status">
+            <span class="sr-only">Зареждане...</span>
+          </div>
+        </div>
+
+        <div *ngIf="!loading && courseSchedules.length === 0" class="text-center text-muted">
+          <p>Все още няма създадени курсове</p>
+        </div>
+
+        <div *ngIf="!loading && courseSchedules.length > 0" class="schedules-grid">
+          <div *ngFor="let schedule of courseSchedules" class="schedule-card card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">{{ schedule.title }}</h5>
+              <span [class]="'badge ' + getStatusBadgeClass(schedule.status)">
+                {{ getStatusText(schedule.status) }}
+              </span>
+            </div>
+            <div class="card-body">
+              <p class="text-muted">{{ schedule.description }}</p>
+
+              <div class="schedule-info">
+                <div class="row">
+                  <div class="col-md-6">
+                    <p><strong>Инструктор:</strong> {{ schedule.instructorName }}</p>
+                    <p><strong>Период:</strong> {{ schedule.weekStartDate | date:'dd.MM.yyyy' }} - {{
+                      schedule.weekEndDate | date:'dd.MM.yyyy' }}</p>
+                    <p><strong>Брой занятия:</strong> {{ schedule.courses.length }}</p>
+                  </div>
+                  <div class="col-md-6">
+                    <p *ngIf="schedule.price"><strong>Цена:</strong> {{ schedule.price }} лв.</p>
+                    <p *ngIf="schedule.maxParticipants"><strong>Макс. участници:</strong> {{ schedule.maxParticipants }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="courses-preview mt-3">
+                <h6>Занятия за седмицата:</h6>
+                <div class="courses-timeline">
+                  <div *ngFor="let course of schedule.courses" class="course-timeline-item">
+                    <div class="course-day">{{ getDayLabel(course.dayOfWeek) }}</div>
+                    <div class="course-time">{{ course.startTime }} - {{ course.endTime }}</div>
+                    <div class="course-title">{{ course.title }}</div>
+                    <span
+                      [class]="'badge badge-sm ' + (course.difficulty === 'beginner' ? 'badge-success' : course.difficulty === 'intermediate' ? 'badge-warning' : 'badge-danger')">
+                      {{ getDifficultyLabel(course.difficulty) }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card-actions mt-3">
+                <button class="btn btn-sm btn-outline-primary" (click)="editSchedule(schedule)">
+                  <i class="fas fa-edit"></i> Редактирай
+                </button>
+                <button class="btn btn-sm btn-outline-danger ml-2" (click)="deleteSchedule(schedule._id)">
+                  <i class="fas fa-trash"></i> Изтрий
+                </button>
+
+                <div class="btn-group ml-2" role="group">
+                  <button *ngIf="schedule.status === 'draft'" class="btn btn-sm btn-outline-success"
+                    (click)="toggleStatus(schedule, 'published')">
+                    <i class="fas fa-check"></i> Публикувай
+                  </button>
+                  <button *ngIf="schedule.status === 'published'" class="btn btn-sm btn-outline-info"
+                    (click)="toggleStatus(schedule, 'completed')">
+                    <i class="fas fa-flag-checkered"></i> Завърши
+                  </button>
+                  <button *ngIf="schedule.status !== 'cancelled'" class="btn btn-sm btn-outline-warning"
+                    (click)="toggleStatus(schedule, 'cancelled')">
+                    <i class="fas fa-ban"></i> Отмени
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

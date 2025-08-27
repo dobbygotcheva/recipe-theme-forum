@@ -1,0 +1,40 @@
+<div class="favorites-display">
+  <div class="section-header">
+    <h2>{{ title }}</h2>
+  </div>
+
+  <div *ngIf="recipes.length === 0" class="empty-state">
+    <div class="empty-icon">{{ title.includes('Любими') ? '❤️' : '👍' }}</div>
+    <h3>{{ emptyMessage }}</h3>
+    <p>{{ title.includes('Любими') ? 'Разгледайте рецептите и добавете в любими!' : 'Разгледайте рецептите и добавете в
+      харесани!' }}</p>
+  </div>
+
+  <div *ngIf="recipes.length > 0" class="recipes-grid">
+    <div *ngFor="let recipe of recipes" class="recipe-card favorite-card">
+      <div class="recipe-header">
+        <h3>{{ recipe.title }}</h3>
+        <span class="favorite-badge">❤️ Любима</span>
+      </div>
+
+      <div class="recipe-content">
+        <p class="recipe-description">{{ recipe.text?.substring(0, 100) }}...</p>
+        <div class="recipe-meta">
+          <span class="category">🏷️ {{ recipe.category }}</span>
+          <span class="time">⏰ {{ recipe.time }} мин</span>
+          <span class="rating" *ngIf="recipe.averageRating">⭐ {{ recipe.averageRating | number:'1.1-1' }}</span>
+        </div>
+      </div>
+
+      <div class="recipe-actions">
+        <button (click)="viewRecipe(recipe._id)" class="action-btn view-btn">
+          👁️ Преглед
+        </button>
+
+        <button *ngIf="showRemoveButton" (click)="removeFromFavorites(recipe._id)" class="action-btn remove-btn">
+          ❌ Премахни от любими
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

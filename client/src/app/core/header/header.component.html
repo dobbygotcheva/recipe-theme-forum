@@ -1,0 +1,51 @@
+<header class="header">
+  <div class="header-content">
+    <!-- Left side: Logo, Title, and Navigation -->
+    <div class="header-left">
+      <!-- Unified Container: Logo, Title, and Navigation -->
+      <div class="unified-container">
+        <!-- Logo and Brand -->
+        <div class="header-brand">
+          <a href="/" class="logo-link">
+            <img src="assets/logo.jpg" alt="Logo" />
+          </a>
+          <h1 class="brand-title">
+            <a href="/">Бързо лесно вкусно за злоядковци</a>
+          </h1>
+        </div>
+
+        <!-- User Actions (Login, Register, Notifications) -->
+        <div class="user-actions-top">
+          <div class="user-buttons-top">
+            <a *ngIf="isLoggedIn" class="btn btn-primary" [routerLink]="isAdmin ? '/admin' : '/profile'">Профил</a>
+            <button *ngIf="isLoggedIn" class="btn btn-danger" (click)="logout()">Излез</button>
+            <app-notification-dropdown *ngIf="isLoggedIn && !isAdmin"></app-notification-dropdown>
+            <a *ngIf="!isLoggedIn" class="btn btn-primary" routerLink="/auth/login">Влез</a>
+            <a *ngIf="!isLoggedIn" class="btn btn-secondary" routerLink="/auth/register">Регистрирай се</a>
+          </div>
+        </div>
+
+        <!-- Main Navigation -->
+        <nav class="main-navigation">
+          <div class="nav-menu">
+            <a href="/" class="nav-brand-link">Начало</a>
+            <a href="/courses">Курсове</a>
+            <a href="/themes">Рецепти</a>
+
+            <a href="/news">Актуално</a>
+            <a href="/search">Търсене</a>
+            <a href="/contact" class="contact-btn">👨‍🍳 Контакт</a>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Right side: Advertisement -->
+    <div class="header-right">
+      <!-- Advertisement Image -->
+      <div class="header-advertisement">
+        <img src="assets/advertisement.jpg" alt="Реклама" class="ad-image" />
+      </div>
+    </div>
+  </div>
+</header>
