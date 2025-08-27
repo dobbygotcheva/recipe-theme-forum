@@ -1,0 +1,128 @@
+<div class="container">
+  <h3>Всички рецепти</h3>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading">
+    <p>Зареждане на рецептите...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="hasError" class="error">
+    <p>{{ errorMessage }}</p>
+    <button (click)="retryLoad()" class="btn btn-primary">
+      Опитайте отново
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!isLoading && !hasError">
+    <!-- Sorting Controls -->
+    <div class="sorting-controls">
+      <label for="sort-select">Сортирай по:</label>
+      <select id="sort-select" [(ngModel)]="selectedSort" (change)="sortThemes()">
+        <option value="newest">Най-нови</option>
+        <option value="oldest">Най-стари</option>
+        <option value="rating-high">Рейтинг (най-висок)</option>
+        <option value="rating-low">Рейтинг (най-нисък)</option>
+        <option value="title">Заглавие (А-Я)</option>
+        <option value="title-reverse">Заглавие (Я-А)</option>
+        <option value="time">Време за приготвяне (най-бързи)</option>
+        <option value="time-reverse">Време за приготвяне (най-бавни)</option>
+        <option value="calories-low">🔥 Калории (най-малко)</option>
+        <option value="calories-high">🔥 Калории (най-много)</option>
+        <option value="protein-high">💪 Протеини (най-много)</option>
+        <option value="protein-low">💪 Протеини (най-малко)</option>
+        <option value="carbs-low">🍞 Въглехидрати (най-малко)</option>
+        <option value="carbs-high">🍞 Въглехидрати (най-много)</option>
+        <option value="fats-low">🥑 Мазнини (най-малко)</option>
+        <option value="fats-high">🥑 Мазнини (най-много)</option>
+      </select>
+    </div>
+
+    <!-- No Themes Message -->
+    <div *ngIf="themesList.length === 0" class="error">
+      <p>Няма намерени рецепти.</p>
+    </div>
+
+    <!-- Themes List -->
+    <ul class="cards" *ngIf="themesList && themesList.length > 0">
+      <li class="card" *ngFor="let post of themesList; trackBy: trackByThemeId">
+        <!-- Favorite Button -->
+        <div class="favorite-button" *ngIf="isLogged && post._id">
+          <button (click)="toggleFavorite(post._id)" class="favorite-btn" [class.favorited]="isFavorite(post._id)"
+            [title]="isFavorite(post._id) ? 'Премахни от любими' : 'Добави в любими'">
+            {{ isFavorite(post._id) ? '❤️' : '🤍' }}
+          </button>
+        </div>
+
+        <img [src]="post.img || 'assets/logo.jpg'" [alt]="(post.title || 'Recipe') | uppercase"
+          (error)="onImageError($event)" onerror="this.onerror=null; this.src='assets/logo.jpg';" loading="lazy" />
+        <h6>{{ post.title || 'Без заглавие' }}</h6>
+        <span class="created">
+          Публикувана: {{ (post.created_at || defaultDate) | date:'dd.MM.y' }}
+        </span>
+        <p class="time">
+          <span class="material-symbols-outlined">schedule</span>
+          Време на приготвяне в минути: {{ post.time || 0 }}
+        </p>
+
+        <!-- Nutritional Information Display -->
+        <div class="nutritional-info" *ngIf="hasNutritionalInfo(post)">
+          <h4>🥗 Хранителна информация</h4>
+          <div class="nutritional-grid">
+            <div class="nutrition-item" *ngIf="post.calories">
+              <span class="nutrition-icon">🔥</span>
+              <span class="nutrition-value">{{ post.calories }} kcal</span>
+            </div>
+            <div class="nutrition-item" *ngIf="post.protein">
+              <span class="nutrition-icon">💪</span>
+              <span class="nutrition-value">{{ post.protein }}g протеини</span>
+            </div>
+            <div class="nutrition-item" *ngIf="post.fats">
+              <span class="nutrition-icon">🥑</span>
+              <span class="nutrition-value">{{ post.fats }}g мазнини</span>
+            </div>
+            <div class="nutrition-item" *ngIf="post.carbs">
+              <span class="nutrition-icon">🍞</span>
+              <span class="nutrition-value">{{ post.carbs }}g въглехидрати</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rating Display -->
+        <div class="rating-display">
+          <span class="rating-text">Рейтинг: {{ (post.averageRating || 0) | number:'1.1-1' }} / 5</span>
+          <div class="stars-display">
+            <span *ngFor="let star of [1,2,3,4,5]" class="star {{ getStarClass(post.averageRating || 0, star) }}">
+              ★
+            </span>
+          </div>
+          <span class="rating-count">({{ post.totalRatings || 0 }} оценки)</span>
+        </div>
+
+        <!-- Like/Dislike Buttons -->
+        <div class="like-dislike-section" *ngIf="isLogged && post._id">
+          <div class="like-dislike-buttons">
+            <button class="action-btn like-btn" [class.active]="hasUserLiked(post._id)"
+              (click)="likeRecipe(post._id, 'like')"
+              [title]="hasUserLiked(post._id) ? 'Премахни харесването' : 'Харесай'">
+              <span class="material-symbols-outlined">thumb_up</span>
+              <span class="count">{{ getLikeCount(post) }}</span>
+            </button>
+
+            <button class="action-btn dislike-btn" [class.active]="hasUserDisliked(post._id)"
+              (click)="likeRecipe(post._id, 'dislike')"
+              [title]="hasUserDisliked(post._id) ? 'Премахни нехаресването' : 'Не харесай'">
+              <span class="material-symbols-outlined">thumb_down</span>
+              <span class="count">{{ getDislikeCount(post) }}</span>
+            </button>
+          </div>
+        </div>
+
+        <p>Съставки: {{ post.ingredients || 'Няма информация за съставките' }}</p>
+        <p>Начин на приготвяне: {{ post.text || 'Няма информация за начина на приготвяне' }}</p>
+        <a [routerLink]="['/theme', post._id]" *ngIf="post._id">Вижте цялата рецепта...</a>
+      </li>
+    </ul>
+  </div>
+</div>

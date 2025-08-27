@@ -1,0 +1,105 @@
+<div class="courses-page">
+  <div class="page-header">
+    <div class="container">
+      <h1>Курсове по готвене</h1>
+      <p class="lead">Открийте нашите курсове по готвене и подобрете вашите кулинарни умения</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-section">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Зареждане...</span>
+      </div>
+      <p>Зареждане на курсовете...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !loading" class="error-section">
+      <div class="alert alert-danger" role="alert">
+        <i class="fas fa-exclamation-triangle"></i>
+        {{ error }}
+        <button class="btn btn-outline-danger btn-sm ms-3" (click)="loadCourses()">
+          Опитайте отново
+        </button>
+      </div>
+    </div>
+
+    <!-- No Courses State -->
+    <div *ngIf="!loading && !error && courses.length === 0" class="no-courses-section">
+      <div class="text-center py-5">
+        <i class="fas fa-utensils fa-3x text-muted mb-3"></i>
+        <h3>Все още няма налични курсове</h3>
+        <p class="text-muted">Проверете отново по-късно за нови курсове по готвене</p>
+      </div>
+    </div>
+
+    <!-- Courses Table -->
+    <div *ngIf="!loading && !error && courses.length > 0" class="courses-table-section">
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead class="table-dark">
+            <tr>
+              <th>Курс</th>
+              <th>Описание</th>
+              <th>Ден</th>
+              <th>Време</th>
+              <th>Продължителност</th>
+              <th>Макс. студенти</th>
+              <th>Статус</th>
+              <th>Действие</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let course of courses" class="course-row">
+              <td>
+                <strong>{{ course.title }}</strong>
+              </td>
+              <td>{{ course.description }}</td>
+              <td>
+                <span class="badge bg-primary">{{ course.day }}</span>
+              </td>
+              <td>
+                <span class="badge bg-info">{{ course.time }}</span>
+              </td>
+              <td>{{ course.duration }} мин</td>
+              <td>
+                <span class="enrollment-count">
+                  {{ course.enrolledStudents || 0 }} / {{ course.maxStudents }}
+                </span>
+                <div class="enrollment-progress">
+                  <div class="progress-bar"
+                    [style.width.%]="((course.enrolledStudents || 0) / course.maxStudents) * 100">
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="badge bg-success">{{ course.status }}</span>
+              </td>
+              <td>
+                <button *ngIf="isLoggedIn && !isEnrolled(course._id)" (click)="enrollInCourse(course)"
+                  class="btn btn-success btn-sm" [disabled]="course.enrolledStudents >= course.maxStudents">
+                  📚 Запиши се
+                </button>
+                <div *ngIf="isEnrolled(course._id)">
+                  <span class="badge bg-info me-2">✅ Записан</span>
+                  <button (click)="unenrollFromCourse(course)" class="btn btn-outline-danger btn-sm">
+                    🚫 Отпиши се
+                  </button>
+                </div>
+                <span *ngIf="!isLoggedIn" class="text-muted">
+                  Влезте за да се запишете
+                </span>
+                <span *ngIf="course.enrolledStudents >= course.maxStudents" class="badge bg-warning">
+                  🚫 Пълен
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,484 @@
+.course-schedule-management {
+    padding: 20px;
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #e9ecef;
+
+        h2 {
+            margin: 0;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            }
+
+            i {
+                margin-right: 8px;
+            }
+        }
+    }
+
+    .form-container {
+        margin-bottom: 30px;
+
+        .card {
+            border: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+
+            .card-header {
+                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                border-bottom: 1px solid #dee2e6;
+                border-radius: 12px 12px 0 0;
+                padding: 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                h4 {
+                    margin: 0;
+                    color: #2c3e50;
+                    font-weight: 600;
+                }
+
+                .btn-outline-secondary {
+                    border-radius: 50%;
+                    width: 32px;
+                    height: 32px;
+                    padding: 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+            }
+
+            .card-body {
+                padding: 30px;
+
+                .form-group {
+                    margin-bottom: 20px;
+
+                    label {
+                        font-weight: 600;
+                        color: #495057;
+                        margin-bottom: 8px;
+                        display: block;
+                    }
+
+                    .form-control {
+                        border: 2px solid #e9ecef;
+                        border-radius: 8px;
+                        padding: 12px 16px;
+                        transition: all 0.3s ease;
+
+                        &:focus {
+                            border-color: #667eea;
+                            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+                        }
+                    }
+
+                    textarea.form-control {
+                        resize: vertical;
+                        min-height: 80px;
+                    }
+                }
+
+                .courses-section {
+                    margin-top: 30px;
+                    padding-top: 30px;
+                    border-top: 2px solid #e9ecef;
+
+                    h5 {
+                        color: #2c3e50;
+                        font-weight: 600;
+                        margin-bottom: 20px;
+                    }
+
+                    .courses-list {
+                        .course-item {
+                            border: 2px solid #e9ecef;
+                            border-radius: 10px;
+                            transition: all 0.3s ease;
+
+                            &:hover {
+                                border-color: #667eea;
+                                box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
+                            }
+
+                            .card-body {
+                                padding: 20px;
+
+                                h6 {
+                                    color: #495057;
+                                    font-weight: 600;
+                                    margin-bottom: 15px;
+                                }
+
+                                .btn-outline-danger {
+                                    border-radius: 50%;
+                                    width: 28px;
+                                    height: 28px;
+                                    padding: 0;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    font-size: 12px;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .form-actions {
+                    margin-top: 30px;
+                    padding-top: 20px;
+                    border-top: 1px solid #dee2e6;
+                    text-align: right;
+
+                    .btn {
+                        padding: 12px 24px;
+                        border-radius: 8px;
+                        font-weight: 500;
+                        margin-left: 10px;
+
+                        &.btn-primary {
+                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            border: none;
+
+                            &:hover {
+                                transform: translateY(-1px);
+                                box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .schedules-list {
+        .card {
+            border: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+
+            .card-header {
+                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                border-bottom: 1px solid #dee2e6;
+                border-radius: 12px 12px 0 0;
+                padding: 20px;
+
+                h4 {
+                    margin: 0;
+                    color: #2c3e50;
+                    font-weight: 600;
+                }
+            }
+
+            .card-body {
+                padding: 30px;
+
+                .spinner-border {
+                    color: #667eea;
+                }
+
+                .schedules-grid {
+                    .schedule-card {
+                        border: 2px solid #e9ecef;
+                        border-radius: 12px;
+                        transition: all 0.3s ease;
+                        margin-bottom: 20px;
+
+                        &:hover {
+                            border-color: #667eea;
+                            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.15);
+                            transform: translateY(-2px);
+                        }
+
+                        .card-header {
+                            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                            border-bottom: 1px solid #dee2e6;
+                            border-radius: 10px 10px 0 0;
+                            padding: 15px 20px;
+
+                            h5 {
+                                color: #2c3e50;
+                                font-weight: 600;
+                                margin: 0;
+                            }
+
+                            .badge {
+                                padding: 8px 12px;
+                                border-radius: 20px;
+                                font-size: 12px;
+                                font-weight: 500;
+
+                                &.badge-secondary {
+                                    background-color: #6c757d;
+                                    color: white;
+                                }
+
+                                &.badge-success {
+                                    background-color: #28a745;
+                                    color: white;
+                                }
+
+                                &.badge-info {
+                                    background-color: #17a2b8;
+                                    color: white;
+                                }
+
+                                &.badge-danger {
+                                    background-color: #dc3545;
+                                    color: white;
+                                }
+                            }
+                        }
+
+                        .card-body {
+                            padding: 20px;
+
+                            .text-muted {
+                                color: #6c757d !important;
+                                font-style: italic;
+                                margin-bottom: 20px;
+                            }
+
+                            .schedule-info {
+                                background: #f8f9fa;
+                                padding: 15px;
+                                border-radius: 8px;
+                                margin-bottom: 20px;
+
+                                p {
+                                    margin-bottom: 8px;
+                                    color: #495057;
+
+                                    strong {
+                                        color: #2c3e50;
+                                    }
+                                }
+                            }
+
+                            .courses-preview {
+                                h6 {
+                                    color: #2c3e50;
+                                    font-weight: 600;
+                                    margin-bottom: 15px;
+                                }
+
+                                .courses-timeline {
+                                    display: grid;
+                                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                                    gap: 15px;
+
+                                    .course-timeline-item {
+                                        background: #f8f9fa;
+                                        padding: 15px;
+                                        border-radius: 8px;
+                                        border-left: 4px solid #667eea;
+                                        transition: all 0.3s ease;
+
+                                        &:hover {
+                                            background: #e9ecef;
+                                            transform: translateX(5px);
+                                        }
+
+                                        .course-day {
+                                            font-weight: 600;
+                                            color: #2c3e50;
+                                            margin-bottom: 5px;
+                                        }
+
+                                        .course-time {
+                                            font-size: 14px;
+                                            color: #667eea;
+                                            margin-bottom: 8px;
+                                        }
+
+                                        .course-title {
+                                            font-weight: 500;
+                                            color: #495057;
+                                            margin-bottom: 8px;
+                                        }
+
+                                        .badge-sm {
+                                            padding: 4px 8px;
+                                            font-size: 10px;
+                                            border-radius: 12px;
+
+                                            &.badge-success {
+                                                background-color: #28a745;
+                                                color: white;
+                                            }
+
+                                            &.badge-warning {
+                                                background-color: #ffc107;
+                                                color: #212529;
+                                            }
+
+                                            &.badge-danger {
+                                                background-color: #dc3545;
+                                                color: white;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            .card-actions {
+                                display: flex;
+                                flex-wrap: wrap;
+                                gap: 10px;
+                                align-items: center;
+
+                                .btn {
+                                    padding: 8px 16px;
+                                    border-radius: 6px;
+                                    font-size: 14px;
+                                    font-weight: 500;
+
+                                    &.btn-outline-primary {
+                                        color: #667eea;
+                                        border-color: #667eea;
+
+                                        &:hover {
+                                            background-color: #667eea;
+                                            color: white;
+                                        }
+                                    }
+
+                                    &.btn-outline-danger {
+                                        color: #dc3545;
+                                        border-color: #dc3545;
+
+                                        &:hover {
+                                            background-color: #dc3545;
+                                            color: white;
+                                        }
+                                    }
+
+                                    &.btn-outline-success {
+                                        color: #28a745;
+                                        border-color: #28a745;
+
+                                        &:hover {
+                                            background-color: #28a745;
+                                            color: white;
+                                        }
+                                    }
+
+                                    &.btn-outline-info {
+                                        color: #17a2b8;
+                                        border-color: #17a2b8;
+
+                                        &:hover {
+                                            background-color: #17a2b8;
+                                            color: white;
+                                        }
+                                    }
+
+                                    &.btn-outline-warning {
+                                        color: #ffc107;
+                                        border-color: #ffc107;
+
+                                        &:hover {
+                                            background-color: #ffc107;
+                                            color: #212529;
+                                        }
+                                    }
+                                }
+
+                                .btn-group {
+                                    .btn {
+                                        border-radius: 0;
+
+                                        &:first-child {
+                                            border-top-left-radius: 6px;
+                                            border-bottom-left-radius: 6px;
+                                        }
+
+                                        &:last-child {
+                                            border-top-right-radius: 6px;
+                                            border-bottom-right-radius: 6px;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+    .course-schedule-management {
+        padding: 15px;
+
+        .header {
+            flex-direction: column;
+            gap: 15px;
+            text-align: center;
+
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        .form-container .card .card-body {
+            padding: 20px;
+        }
+
+        .schedules-list .card .card-body {
+            padding: 20px;
+        }
+
+        .courses-timeline {
+            grid-template-columns: 1fr !important;
+        }
+
+        .card-actions {
+            flex-direction: column;
+            align-items: stretch !important;
+
+            .btn {
+                margin-bottom: 5px;
+            }
+        }
+    }
+}
+
+@media (max-width: 576px) {
+    .course-schedule-management {
+        .form-container .card .card-body {
+            padding: 15px;
+        }
+
+        .schedules-list .card .card-body {
+            padding: 15px;
+        }
+
+        .course-item .card-body {
+            padding: 15px;
+        }
+    }
+}

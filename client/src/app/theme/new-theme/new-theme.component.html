@@ -1,0 +1,163 @@
+<div class="container">
+  <form class="new-theme" #form="ngForm" (ngSubmit)="createThemeHandler(form)">
+    <fieldset>
+      <h2>Създайте нова рецепта:</h2>
+  
+<!-- TITLE -->
+ 
+        <label for="title">Заглавие: </label>
+        <input class="input-error" type="title" name="title" id="title" placeholder="Яйца на очи" #inputTitle="ngModel" ngModel required minlength="2"
+        />
+
+      <ng-container *ngIf="inputTitle.touched">
+        <p class="error" *ngIf="inputTitle.errors?.['required']">
+          Въведете заглавие на пецептата!
+        </p>
+        <p class="error" *ngIf="inputTitle.errors?.['minlength']">
+          Заглавието на рецептата трябва да е поне
+          {{inputTitle.errors?.['minlength']['requiredLength']}} знака!
+        </p>
+      </ng-container>
+<!-- CATEGORY -->
+
+        <label for="category">Категория: </label>
+        <select id="category" type="text" name="category" id="category" placeholder="Основни ястия" #inputCategory="ngModel"  ngModel required >
+          <option *ngFor="let item of categories" [value]="item">
+      {{item}}
+    </option>
+       
+        </select>
+      
+      <ng-container *ngIf="inputCategory.touched">
+        <p class="error" *ngIf="inputCategory.errors?.['required']">
+          Въведете категория!
+        </p>
+       
+      </ng-container>
+<!-- TIME -->
+ 
+        <label for="time">Време за приготвяне: </label>
+        <input type="number" name="time" id="time" placeholder="10" #inputTime="ngModel" ngModel required minlength="1" />
+      
+      <ng-container *ngIf="inputTime.touched">
+        <p class="error" *ngIf="inputTime.errors?.['required']">
+          Въведете време за приготвяне в минути!
+        </p>
+        <p class="error" *ngIf="inputTime.errors?.['minlength']">
+          Времето трябва да е поне един символ!
+          {{inputTime.errors?.['minlength']['requiredLength']}} знака!
+        </p>
+      </ng-container>
+
+      <!--IMG  -->
+    
+        <label for="img">Снимка: </label>
+        <div class="image-upload-container">
+          <input 
+            type="file" 
+            name="image" 
+            id="image" 
+            accept="image/*" 
+            (change)="onFileSelected($event)"
+            #inputImg="ngModel" 
+            ngModel 
+            required />
+          <input 
+            type="text" 
+            name="img" 
+            id="img" 
+            placeholder="Или въведете URL на снимка..." 
+            #inputImgUrl="ngModel" 
+            ngModel 
+            [(ngModel)]="imageUrl" />
+          
+          <div *ngIf="selectedFile" class="image-preview">
+            <img [src]="imagePreview" alt="Preview" style="max-width: 200px; max-height: 200px;">
+            <p>Избрана снимка: {{selectedFile.name}}</p>
+          </div>
+        </div>
+ 
+      <ng-container *ngIf="inputImg.touched">
+        <p class="error" *ngIf="inputImg.errors?.['required'] && !imageUrl">
+          Изберете снимка или въведете URL!
+        </p>
+      </ng-container>
+
+      <!-- VIDEO TUTORIAL -->
+      <label for="video">Видео урок (по желание): </label>
+      <div class="video-upload-container">
+        <div class="video-option">
+          <label for="videoUrl">YouTube линк:</label>
+          <input 
+            type="url" 
+            name="videoUrl" 
+            id="videoUrl" 
+            placeholder="https://www.youtube.com/watch?v=..." 
+            [(ngModel)]="videoUrl"
+            #inputVideoUrl="ngModel" />
+          <small>Въведете линк от YouTube</small>
+        </div>
+        
+        <div class="video-option">
+          <label for="videoFile">Или качете видео файл:</label>
+          <input 
+            type="file" 
+            name="video" 
+            id="video" 
+            accept="video/*" 
+            (change)="onVideoFileSelected($event)" />
+          <small>Поддържани формати: MP4, AVI, MOV, WMV, FLV, WebM, MKV (макс. 100MB)</small>
+          
+          <div *ngIf="selectedVideoFile" class="video-preview">
+            <p>Избран видео файл: {{selectedVideoFile.name}}</p>
+            <p>Размер: {{(selectedVideoFile.size / 1024 / 1024).toFixed(2)}} MB</p>
+          </div>
+        </div>
+      </div>
+
+      <ng-container *ngIf="inputVideoUrl.touched">
+        <p class="error" *ngIf="videoUrl && !isValidYouTubeUrl(videoUrl)">
+          Моля, въведете валиден YouTube линк!
+        </p>
+        <p class="error" *ngIf="selectedVideoFile && selectedVideoFile.size > 100 * 1024 * 1024">
+          Видео файлът е твърде голям! Максималният размер е 100MB.
+        </p>
+      </ng-container>
+       <!--INGREDIENTS -->
+      
+        <label for="ingredients">Необходими продукти: </label>
+        <textarea class="ingredients" type="text" name="ingredients" id="ingredients" placeholder="Сол, захар..." #inputIngeredients="ngModel" ngModel required minlength="10"></textarea>
+  
+      <ng-container *ngIf="inputIngeredients.touched">
+        <p class="error" *ngIf="inputIngeredients.errors?.['required']">
+          Въведете необходими продукти!
+        </p>
+        <p class="error" *ngIf="inputIngeredients.errors?.['minlength']">
+          Полетето 'Необходими продукти" е поне {{inputIngeredients.errors?.['minlength']['requiredLength']}} знака!
+        </p>
+      </ng-container>
+
+            <!--TEXT  -->
+    
+        <label for="text">Начин на приготвяне: </label>
+        <textarea class="text" type="text" name="text" id="text" placeholder="Рецептата се приготвя..." #inputText="ngModel" ngModel required minlength="20" ></textarea>
+  
+      <ng-container *ngIf="inputText.touched">
+        <p class="error" *ngIf="inputText.errors?.['required']">
+          Опишете как се приготвя рецептата!
+        </p>
+        <p class="error" *ngIf="inputText.errors?.['minlength']">
+          Описанието е поне {{inputText.errors?.['minlength']['requiredLength']}} знака!
+        </p>
+      </ng-container>
+
+      <button
+        [disabled]="form.invalid"
+        [style]="{ backgroundColor: form.invalid ? 'lightgray' : 'lightgreen' }"
+      >
+        Публикувайте рецептата
+      </button>
+    </fieldset>
+  </form>
+  
+</div>

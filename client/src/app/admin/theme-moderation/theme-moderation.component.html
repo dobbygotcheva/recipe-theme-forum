@@ -1,0 +1,135 @@
+<div class="theme-moderation">
+  <div class="page-header">
+    <h1>Content Moderation</h1>
+    <button (click)="loadThemes()" class="refresh-btn">
+      <span class="material-symbols-outlined">refresh</span>
+      Refresh
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading">
+    <p>Loading themes for moderation...</p>
+  </div>
+
+  <!-- Moderation Content -->
+  <div *ngIf="!isLoading" class="moderation-content">
+    <!-- Filters -->
+    <div class="filters">
+      <div class="search-box">
+        <span class="material-symbols-outlined">search</span>
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm" 
+          placeholder="Search themes by title or category..."
+          class="search-input"
+        >
+      </div>
+      
+      <div class="status-filter">
+        <label for="status-select">Filter by status:</label>
+        <select id="status-select" [(ngModel)]="selectedStatus" class="status-select">
+          <option value="all">All Status</option>
+          <option value="pending">Pending Review</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Themes List -->
+    <div class="themes-list">
+      <div *ngFor="let theme of filteredThemes" class="theme-card">
+        <div class="theme-header">
+          <div class="theme-info">
+            <h3>{{ theme.title }}</h3>
+            <span class="category">{{ theme.category }}</span>
+            <span class="author">by {{ theme.author?.username || 'Unknown' }}</span>
+          </div>
+          <div class="status-section">
+            <span class="status-badge" [ngClass]="getStatusBadgeClass(theme.status)">
+              {{ getStatusText(theme.status) }}
+            </span>
+            <span class="created-date">{{ theme.created_at | date:'short' }}</span>
+          </div>
+        </div>
+
+        <div class="theme-content">
+          <div class="theme-image" *ngIf="theme.img">
+            <img [src]="theme.img" [alt]="theme.title">
+          </div>
+          <div class="theme-details">
+            <p class="ingredients">
+              <strong>Ingredients:</strong> {{ theme.ingredients }}
+            </p>
+            <p class="instructions">
+              <strong>Instructions:</strong> {{ theme.text }}
+            </p>
+            <p class="time">
+              <span class="material-symbols-outlined">schedule</span>
+              Cooking time: {{ theme.time }} minutes
+            </p>
+          </div>
+        </div>
+
+        <div class="moderation-actions">
+          <div class="action-buttons">
+            <button 
+              *ngIf="theme.status === 'pending'"
+              (click)="approveTheme(theme._id)" 
+              class="approve-btn"
+              title="Approve theme"
+            >
+              <span class="material-symbols-outlined">check</span>
+              Approve
+            </button>
+            
+            <button 
+              *ngIf="theme.status === 'pending'"
+              (click)="rejectTheme(theme._id)" 
+              class="reject-btn"
+              title="Reject theme"
+            >
+              <span class="material-symbols-outlined">close</span>
+              Reject
+            </button>
+            
+            <button 
+              (click)="deleteTheme(theme._id)" 
+              class="delete-btn"
+              title="Delete theme"
+            >
+              <span class="material-symbols-outlined">delete</span>
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Themes Message -->
+      <div *ngIf="filteredThemes.length === 0" class="no-themes">
+        <p>No themes found matching your criteria.</p>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="summary">
+      <div class="summary-item">
+        <span class="summary-label">Total Themes:</span>
+        <span class="summary-value">{{ themes.length }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Pending Review:</span>
+        <span class="summary-value">{{ getPendingCount() }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Approved:</span>
+        <span class="summary-value">{{ getApprovedCount() }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Rejected:</span>
+        <span class="summary-value">{{ getRejectedCount() }}</span>
+      </div>
+    </div>
+  </div>
+</div>

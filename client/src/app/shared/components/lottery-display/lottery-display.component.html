@@ -1,0 +1,105 @@
+<div class="lottery-container" *ngIf="lottery">
+  <div class="lottery-header">
+    <h2><i class="fas fa-gift"></i> {{ lottery.name }}</h2>
+    <p class="lottery-description">{{ lottery.description }}</p>
+  </div>
+
+  <div class="lottery-prize">
+    <div class="prize-icon">
+      <i class="fas fa-book-open"></i>
+    </div>
+    <div class="prize-info">
+      <h3>Награда:</h3>
+      <p>{{ lottery.prize }}</p>
+    </div>
+  </div>
+
+  <div class="lottery-status">
+    <div class="status-indicator" [ngClass]="getStatusClass()">
+      <span class="status-text">{{ getStatusText() }}</span>
+    </div>
+
+    <div class="participants-info">
+      <p *ngIf="!isLoggedIn()"><i class="fas fa-users"></i> Участници: {{ lottery.participants.length > 0 ? 'Да' : 'Не'
+        }}</p>
+      <p *ngIf="isLoggedIn() && !isAdmin()"><i class="fas fa-users"></i> Участници: {{ lottery.participants.length > 0 ?
+        'Да' : 'Не' }}</p>
+      <p *ngIf="isAdmin()"><i class="fas fa-users"></i> Участници: {{ lottery.participants.length }} / {{
+        lottery.maxParticipants }}</p>
+    </div>
+
+    <div class="time-info" *ngIf="lottery.isActive && !lottery.winner">
+      <p><i class="fas fa-clock"></i> Оставащо време: {{ timeRemaining }}</p>
+    </div>
+  </div>
+
+  <!-- Winner announcement -->
+  <div class="winner-announcement" *ngIf="lottery.winner">
+    <div class="winner-card">
+      <h3><i class="fas fa-trophy"></i> Победител!</h3>
+      <div class="winner-info">
+        <i class="fas fa-user-circle"></i>
+        <span>{{ lottery.winner.username }}</span>
+      </div>
+      <p class="congratulations">Поздравления! Ще получите книгата от Шефа!</p>
+    </div>
+  </div>
+
+  <!-- Action buttons -->
+  <div class="lottery-actions" *ngIf="!lottery.winner">
+    <button *ngIf="canJoin()" class="btn btn-primary join-btn" (click)="joinLottery()" [disabled]="loading">
+      <i class="fas fa-ticket-alt"></i>
+      {{ loading ? 'Присъединяване...' : 'Участвай в томболата!' }}
+    </button>
+
+    <button *ngIf="isUserParticipating()" class="btn btn-success" disabled>
+      <i class="fas fa-check"></i>
+      Вече участвате!
+    </button>
+
+    <button *ngIf="!lottery.isActive" class="btn btn-secondary" disabled>
+      <i class="fas fa-pause"></i>
+      Томболата не е активна
+    </button>
+
+    <button *ngIf="lottery.participants.length >= lottery.maxParticipants" class="btn btn-secondary" disabled>
+      <i class="fas fa-users"></i>
+      Томболата е пълна
+    </button>
+  </div>
+
+  <!-- Error and success messages -->
+  <div class="message-container">
+    <div class="alert alert-danger" *ngIf="error">
+      <i class="fas fa-exclamation-triangle"></i>
+      {{ error }}
+    </div>
+
+    <div class="alert alert-success" *ngIf="success">
+      <i class="fas fa-check-circle"></i>
+      {{ success }}
+    </div>
+  </div>
+
+  <!-- Participants list - Only visible to admins -->
+  <div class="participants-list" *ngIf="lottery.participants.length > 0 && isLoggedIn() && isAdmin()">
+    <h4><i class="fas fa-list"></i> Списък с участници (Админ достъп):</h4>
+    <div class="participants-grid">
+      <div 
+        class="participant-item"
+        *ngFor="let participant of lottery.participants; trackBy: trackByParticipant">
+        <i class="fas fa-user"></i>
+        <span>{{ participant.username }}</span>
+        <small>{{ participant.joinDate | date:'short' }}</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading state -->
+<div class="lottery-loading" *ngIf="loading && !lottery">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Зареждане...</span>
+  </div>
+  <p>Зареждане на томболата...</p>
+</div>
