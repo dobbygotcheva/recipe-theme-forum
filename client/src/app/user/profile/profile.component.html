@@ -1,0 +1,279 @@
+<div class="container">
+  <div class="profile-container">
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <div class="avatar-section">
+        <div class="avatar-container">
+          <img [src]="avatar || 'assets/profile.png'" alt="Profile Avatar" class="avatar" />
+          <div class="avatar-overlay" *ngIf="!isEditing">
+            <button class="avatar-upload-btn" (click)="toggleAvatarUpload()">
+              <span class="material-symbols-outlined">photo_camera</span>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Avatar Upload Section -->
+        <div class="avatar-upload-section" *ngIf="isEditing">
+          <div class="file-upload">
+            <input type="file" 
+                   accept="image/*" 
+                   (change)="onFileSelected($event)" 
+                   id="avatar-input" 
+                   class="file-input" />
+            <label for="avatar-input" class="file-label">
+              <span class="material-symbols-outlined">upload</span>
+              Избери снимка
+            </label>
+          </div>
+          
+          <div class="avatar-preview" *ngIf="previewUrl">
+            <img [src]="previewUrl" alt="Preview" class="preview-image" />
+            <div class="preview-actions">
+              <button class="upload-btn" 
+                      (click)="uploadAvatar()" 
+                      [disabled]="isUploadingAvatar">
+                <span class="material-symbols-outlined">check</span>
+                Качи
+              </button>
+              <button class="cancel-btn" (click)="cancelAvatarUpload()">
+                <span class="material-symbols-outlined">close</span>
+                Отказ
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-info">
+        <h2>{{ username }}</h2>
+        <p class="email" *ngIf="preferences?.privacy?.showEmail">{{ email }}</p>
+        <p class="bio" *ngIf="bio">{{ bio }}</p>
+        <p class="phone" *ngIf="phone">{{ phone }}</p>
+        
+        <div class="profile-actions">
+          <button class="edit-btn" (click)="toggleEdit()" *ngIf="!isEditing">
+            <span class="material-symbols-outlined">edit</span>
+            Редактирай профил
+          </button>
+          <button class="password-btn" (click)="togglePasswordChange()" *ngIf="!isChangingPassword">
+            <span class="material-symbols-outlined">lock</span>
+            Смени парола
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Edit Form -->
+    <div class="profile-edit-section" *ngIf="isEditing">
+      <h3>Редактиране на профил</h3>
+      <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="profile-form">
+        <div class="form-group">
+          <label for="username">Потребителско име</label>
+          <input type="text" 
+                 id="username" 
+                 formControlName="username" 
+                 class="form-input"
+                 [class.error]="profileForm.get('username')?.invalid && profileForm.get('username')?.touched" />
+          <div class="error-message" *ngIf="profileForm.get('username')?.invalid && profileForm.get('username')?.touched">
+            Потребителското име трябва да е поне 2 символа
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Имейл</label>
+          <input type="email" 
+                 id="email" 
+                 formControlName="email" 
+                 class="form-input"
+                 [class.error]="profileForm.get('email')?.invalid && profileForm.get('email')?.touched" />
+          <div class="error-message" *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched">
+            Моля въведете валиден имейл
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="bio">Биография</label>
+          <textarea id="bio" 
+                    formControlName="bio" 
+                    class="form-textarea"
+                    placeholder="Разкажете за себе си..."
+                    rows="4"></textarea>
+          <div class="char-count">
+            {{ profileForm.get('bio')?.value?.length || 0 }}/500
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Телефон</label>
+          <input type="tel" 
+                 id="phone" 
+                 formControlName="phone" 
+                 class="form-input"
+                 placeholder="+359 888 123 456" />
+        </div>
+
+        <!-- Preferences Section -->
+        <div class="preferences-section">
+          <h4>Настройки</h4>
+          
+          <div formGroupName="preferences">
+            <div class="preferences-group">
+              <h5>Известия</h5>
+              <div formGroupName="notifications" class="checkbox-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" formControlName="email" />
+                  <span class="checkmark"></span>
+                  Имейл известия
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" formControlName="push" />
+                  <span class="checkmark"></span>
+                  Push известия
+                </label>
+              </div>
+            </div>
+
+            <div class="preferences-group">
+              <h5>Поверителност</h5>
+              <div formGroupName="privacy" class="checkbox-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" formControlName="profilePublic" />
+                  <span class="checkmark"></span>
+                  Публичен профил
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" formControlName="showEmail" />
+                  <span class="checkmark"></span>
+                  Покажи имейл
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" 
+                  class="save-btn" 
+                  [disabled]="!profileForm.valid">
+            <span class="material-symbols-outlined">save</span>
+            Запази
+          </button>
+          <button type="button" 
+                  class="cancel-btn" 
+                  (click)="cancelEdit()">
+            <span class="material-symbols-outlined">close</span>
+            Отказ
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Password Change Form -->
+    <div class="password-change-section" *ngIf="isChangingPassword">
+      <h3>Смяна на парола</h3>
+      <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="password-form">
+        <div class="form-group">
+          <label for="currentPassword">Текуща парола</label>
+          <input type="password" 
+                 id="currentPassword" 
+                 formControlName="currentPassword" 
+                 class="form-input"
+                 [class.error]="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched" />
+          <div class="error-message" *ngIf="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched">
+            Моля въведете текущата парола
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="newPassword">Нова парола</label>
+          <input type="password" 
+                 id="newPassword" 
+                 formControlName="newPassword" 
+                 class="form-input"
+                 [class.error]="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched" />
+          <div class="error-message" *ngIf="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched">
+            Паролата трябва да е поне 5 символа
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Потвърди нова парола</label>
+          <input type="password" 
+                 id="confirmPassword" 
+                 formControlName="confirmPassword" 
+                 class="form-input"
+                 [class.error]="passwordForm.errors?.['passwordMismatch']" />
+          <div class="error-message" *ngIf="passwordForm.errors?.['passwordMismatch']">
+            Паролите не съвпадат
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" 
+                  class="save-btn" 
+                  [disabled]="!passwordForm.valid">
+            <span class="material-symbols-outlined">lock_reset</span>
+            Смени парола
+          </button>
+          <button type="button" 
+                  class="cancel-btn" 
+                  (click)="togglePasswordChange()">
+            <span class="material-symbols-outlined">close</span>
+            Отказ
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- User Recipes Section -->
+    <div class="recipes-section">
+      <h3>Твоите рецепти, {{ username }}</h3>
+      
+      <div class="no-recipes" *ngIf="themes.length === 0">
+        <div class="cat">
+          <div class="ear ear--left"></div>
+          <div class="ear ear--right"></div>
+          <div class="face">
+            <div class="eye eye--left">
+              <div class="eye-pupil"></div>
+            </div>
+            <div class="eye eye--right">
+              <div class="eye-pupil"></div>
+            </div>
+            <div class="muzzle"></div>
+          </div>
+        </div>
+        <p>Вие, {{ username }}, нямате още публикувани рецепти</p>
+      </div>
+
+      <div class="recipes-list" *ngIf="themes.length > 0">
+        <div class="recipe-item" *ngFor="let theme of themes; let i = index">
+          <a [routerLink]="['/theme', theme._id]" class="recipe-link">
+            <span class="recipe-number">Рецепта {{ i + 1 }}</span>
+            <span class="recipe-title">{{ theme.title }}</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Favorites Section -->
+    <div class="favorites-section">
+      <h3>Любими рецепти ({{ favorites.length }})</h3>
+      
+      <div class="no-favorites" *ngIf="favorites.length === 0">
+        <div class="heart-icon">💔</div>
+        <p>Все още нямате любими рецепти</p>
+        <a routerLink="/themes" class="browse-link">Разгледай рецепти</a>
+      </div>
+
+      <div class="favorites-list" *ngIf="favorites.length > 0">
+        <div class="favorite-item" *ngFor="let favorite of favorites; let i = index">
+          <a [routerLink]="['/theme', favorite._id]" class="favorite-link">
+            <span class="favorite-number">Любима {{ i + 1 }}</span>
+            <span class="favorite-title">{{ favorite.title }}</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

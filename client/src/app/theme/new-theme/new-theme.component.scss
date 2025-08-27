@@ -1,0 +1,222 @@
+
+form.new-theme {
+    display: flex;
+    flex-direction: row;
+
+    flex-wrap: wrap;
+    min-width: 360px;
+
+    display:flex;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+    margin: 2em auto;
+    height: 77vh;
+    z-index: 1;
+}
+
+.new-theme fieldset {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    border-radius: 0.3em;
+    padding: 0.8em;
+    background-color: antiquewhite;
+    z-index: 1;
+    border:none;
+}
+
+.new-theme h2 {
+    padding-top: 0;
+    border-bottom: none;
+    color: #6c8b47;
+}
+
+.new-theme p {
+    padding-bottom: 0;
+    padding-top: 1.5rem;
+}
+
+.new-theme input {
+    flex: 0 1 100%;
+    border: 1px solid green;
+    padding: 0.3em;
+  width: 360px;
+    border-radius: 0.3em;
+  
+}
+
+.new-theme select {
+    border-color:green;
+}
+
+.new-theme button{
+    color: white;
+    border: none;
+    border-radius: 0.5em;
+    padding: 0.6em 1.2em;
+    margin-top: 1.5rem;
+    width: 60%;
+    outline: none;
+}
+
+
+
+.new-theme a {
+    color: green;
+}
+
+.new-theme a:hover {
+    cursor: pointer;
+}
+.ingredients{
+    width: 360px;
+    height: 160px;
+}
+textarea{
+    border-radius: 0.5em;
+}
+
+
+.new-theme .field {
+    display: flex;
+    padding-bottom: 0;
+}
+
+/* errors  */
+
+p.error {
+    text-align: left;
+    border-radius: 0.3em;
+    color: red;
+    padding-top: 0;
+}
+
+.text{
+    width: 360px;
+    height: 250px;
+}
+.new-theme label {
+
+    color:green;
+    width: 150px;
+}
+.input-field{
+    display: inline-block;
+ 
+}
+
+.image-upload-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 360px;
+}
+
+.image-upload-container input[type="file"] {
+    border: 2px dashed #6c8b47;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+}
+
+.image-upload-container input[type="file"]:hover {
+    background-color: #e9e9e9;
+}
+
+.image-upload-container input[type="text"] {
+    width: 100%;
+    border: 1px solid green;
+    padding: 0.3em;
+    border-radius: 0.3em;
+}
+
+.image-preview {
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.image-preview img {
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.image-preview p {
+    margin: 5px 0 0 0;
+    color: #666;
+    font-size: 0.9em;
+}
+
+// Video upload styles
+.video-upload-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 360px;
+    margin: 10px 0;
+}
+
+.video-option {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 15px;
+    border: 2px dashed #6c8b47;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    transition: all 0.3s ease;
+}
+
+.video-option:hover {
+    background-color: #e9e9e9;
+    border-color: #5a7a3a;
+}
+
+.video-option label {
+    font-weight: bold;
+    color: #6c8b47;
+    margin-bottom: 5px;
+}
+
+.video-option input[type="url"] {
+    width: 100%;
+    border: 1px solid #ddd;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.video-option input[type="file"] {
+    border: 1px solid #ddd;
+    padding: 8px;
+    border-radius: 4px;
+    background-color: white;
+    cursor: pointer;
+}
+
+.video-option small {
+    color: #666;
+    font-size: 12px;
+    font-style: italic;
+}
+
+.video-preview {
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f0f8f0;
+    text-align: center;
+}
+
+.video-preview p {
+    margin: 5px 0;
+    color: #6c8b47;
+    font-size: 0.9em;
+}

@@ -1,0 +1,222 @@
+<div class="search-container">
+  <!-- Prominent Search Bar at Top -->
+  <div class="search-header">
+    <div class="search-bar-container">
+      <div class="search-input-wrapper">
+        <i class="search-icon">🔍</i>
+        <input type="text" id="searchInput" [(ngModel)]="searchInput" (ngModelChange)="onSearchInputChange()"
+          placeholder="Търсете рецепти, потребители, ингредиенти..." class="main-search-input" />
+        <button *ngIf="searchInput" (click)="clearSearch()" class="clear-btn">
+          ✕
+        </button>
+      </div>
+
+      <!-- Search Type Selector -->
+      <div class="search-type-selector">
+        <button [class.active]="searchType === 'all'" (click)="searchType = 'all'; performSearch()"
+          class="search-type-btn">
+          🌟 Всичко
+        </button>
+        <button [class.active]="searchType === 'recipes'" (click)="searchType = 'recipes'; performSearch()"
+          class="search-type-btn">
+          🍳 Рецепти
+        </button>
+        <button [class.active]="searchType === 'users'" (click)="searchType = 'users'; performSearch()"
+          class="search-type-btn">
+          👥 Потребители
+        </button>
+      </div>
+    </div>
+
+    <!-- Category Filter (only for recipes) -->
+    <div class="category-filter" *ngIf="searchType === 'recipes' || searchType === 'all'">
+      <label for="categorySelect">Категория:</label>
+      <select id="categorySelect" [(ngModel)]="searchInput1" (ngModelChange)="onCategoryChange()"
+        class="category-select">
+        <option value="">Всички категории</option>
+        <option *ngFor="let category of categories" [value]="category">
+          {{ category }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Search Results -->
+  <div class="search-results" *ngIf="searchInput || searchInput1">
+
+    <!-- Recipe Results -->
+    <section class="recipe-results" *ngIf="searchType === 'recipes' || searchType === 'all'">
+      <div class="results-header">
+        <h3>🍳 Рецепти</h3>
+        <span class="result-count">{{ filteredThemes.length }} резултата</span>
+      </div>
+
+      <!-- Sorting Controls -->
+      <div class="sorting-controls" *ngIf="filteredThemes.length > 0">
+        <label for="sort-select">🔀 Сортирай по:</label>
+        <select id="sort-select" [(ngModel)]="selectedSort" (change)="sortThemes()" class="sort-select">
+          <option value="newest">📅 Най-нови</option>
+          <option value="oldest">📅 Най-стари</option>
+          <option value="rating-high">⭐ Рейтинг (най-висок)</option>
+          <option value="rating-low">⭐ Рейтинг (най-нисък)</option>
+          <option value="title-az">📝 Заглавие (А-Я)</option>
+          <option value="title-za">📝 Заглавие (Я-А)</option>
+          <option value="time-low">⏰ Време (най-бързи)</option>
+          <option value="time-high">⏰ Време (най-бавни)</option>
+          <option value="calories-low">🔥 Калории (най-малко)</option>
+          <option value="calories-high">🔥 Калории (най-много)</option>
+          <option value="protein-high">💪 Протеини (най-много)</option>
+          <option value="carbs-low">🍞 Въглехидрати (най-малко)</option>
+          <option value="fats-low">🥑 Мазнини (най-малко)</option>
+        </select>
+        <span class="current-sort">🔀 Сортирано по: {{ getSortDisplayName() }}</span>
+      </div>
+
+      <div class="loading-state" *ngIf="loadingThemes">
+        <div class="spinner"></div>
+        <p>Търсене на рецепти...</p>
+      </div>
+
+      <div class="no-results" *ngIf="!loadingThemes && filteredThemes.length === 0 && (searchInput || searchInput1)">
+        <p>Няма намерени рецепти за "{{ searchInput || searchInput1 }}"</p>
+        <p>Опитайте с други ключови думи или категория</p>
+      </div>
+
+      <div class="recipe-grid" *ngIf="!loadingThemes && filteredThemes.length > 0">
+        <div class="recipe-card" *ngFor="let recipe of filteredThemes">
+          <div class="recipe-image">
+            <img [src]="recipe.img || 'assets/default-recipe.jpg'" [alt]="recipe.title"
+              (error)="onImageError($event, 'assets/default-recipe.jpg')" />
+          </div>
+          <div class="recipe-info">
+            <h4 class="recipe-title">{{ recipe.title }}</h4>
+            <p class="recipe-description">
+              {{ (recipe.ingredients || '').substring(0, 100) + ((recipe.ingredients || '').length > 100 ? '...' : '')
+              }}
+            </p>
+            <div class="recipe-meta">
+              <span class="recipe-category">{{ recipe.category }}</span>
+              <span class="recipe-time">⏱️ {{ recipe.time }} мин</span>
+            </div>
+
+            <!-- Nutritional Information Display -->
+            <div class="nutritional-info" *ngIf="hasNutritionalInfo(recipe)">
+              <h4>🥗 Хранителна информация</h4>
+              <div class="nutritional-grid">
+                <div class="nutrition-item" *ngIf="recipe.calories">
+                  <span class="nutrition-icon">🔥</span>
+                  <span class="nutrition-value">{{ recipe.calories }} kcal</span>
+                </div>
+                <div class="nutrition-item" *ngIf="recipe.protein">
+                  <span class="nutrition-icon">💪</span>
+                  <span class="nutrition-value">{{ recipe.protein }}g протеини</span>
+                </div>
+                <div class="nutrition-item" *ngIf="recipe.fats">
+                  <span class="nutrition-icon">🥑</span>
+                  <span class="nutrition-value">{{ recipe.fats }}g мазнини</span>
+                </div>
+                <div class="nutrition-item" *ngIf="recipe.carbs">
+                  <span class="nutrition-icon">🍞</span>
+                  <span class="nutrition-value">{{ recipe.carbs }}g въглехидрати</span>
+                </div>
+              </div>
+            </div>
+
+            <button (click)="viewRecipe(recipe._id)" class="view-recipe-btn">
+              Виж рецептата
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- User Results -->
+    <section class="user-results" *ngIf="searchType === 'users' || searchType === 'all'">
+      <div class="results-header">
+        <h3>👥 Потребители</h3>
+        <span class="result-count">{{ filteredUsers.length }} потребителя</span>
+      </div>
+
+      <div class="loading-state" *ngIf="loadingUsers">
+        <div class="spinner"></div>
+        <p>Търсене на потребители...</p>
+      </div>
+
+      <div class="no-results" *ngIf="!loadingUsers && filteredUsers.length === 0 && searchInput">
+        <p>Няма намерени потребители за "{{ searchInput }}"</p>
+        <p>Опитайте с друго име или ключова дума</p>
+      </div>
+
+      <div class="user-grid" *ngIf="!loadingUsers && filteredUsers.length > 0">
+        <div class="user-card" *ngFor="let user of filteredUsers">
+          <div class="user-avatar">
+            <img [src]="getAvatarUrl(user)" [alt]="user.username"
+              (error)="onImageError($event, 'assets/default-avatar.png')" />
+          </div>
+          <div class="user-info">
+            <h4 class="username">{{ user.username }}</h4>
+            <p class="user-bio">{{ user.bio || 'Няма описание' }}</p>
+            <div class="user-meta">
+              <span class="user-role" [class]="'role-' + (user.role || 'user')">
+                {{ getRoleText(user.role || 'user') }}
+              </span>
+              <span class="user-email" *ngIf="user.preferences?.privacy?.showEmail">
+                {{ user.email }}
+              </span>
+            </div>
+            <button (click)="viewUserProfile(user._id)" class="view-profile-btn">
+              Виж профила
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results Summary -->
+    <div class="results-summary" *ngIf="searchType === 'all' && (searchInput || searchInput1)">
+      <div class="summary-stats">
+        <div class="stat-item">
+          <span class="stat-label">Рецепти:</span>
+          <span class="stat-number">{{ filteredThemes.length }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Потребители:</span>
+          <span class="stat-number">{{ filteredUsers.length }}</span>
+        </div>
+        <div class="stat-item total">
+          <span class="stat-label">Общо:</span>
+          <span class="stat-number">{{ filteredThemes.length + filteredUsers.length }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Welcome Message (when no search) -->
+  <div class="welcome-message" *ngIf="!searchInput && !searchInput1">
+    <div class="welcome-content">
+      <h2>🔍 Добре дошли в търсачката!</h2>
+      <p>Търсете рецепти, потребители или ингредиенти за да откриете нови вкусове</p>
+
+      <div class="search-tips">
+        <h3>💡 Съвети за търсене:</h3>
+        <ul>
+          <li>Въведете име на рецепта или ингредиент</li>
+          <li>Търсете по потребителско име</li>
+          <li>Използвайте категории за филтриране</li>
+          <li>Комбинирайте различни ключови думи</li>
+        </ul>
+      </div>
+
+      <div class="popular-searches">
+        <h3>🔥 Популярни търсения:</h3>
+        <div class="popular-tags">
+          <span class="tag" (click)="searchInput = 'пица'; performSearch()">Пица</span>
+          <span class="tag" (click)="searchInput = 'паста'; performSearch()">Паста</span>
+          <span class="tag" (click)="searchInput = 'салата'; performSearch()">Салата</span>
+          <span class="tag" (click)="searchInput = 'десерт'; performSearch()">Десерт</span>
+          <span class="tag" (click)="searchInput = 'веган'; performSearch()">Веган</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

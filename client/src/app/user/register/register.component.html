@@ -1,0 +1,98 @@
+<div class="container">
+  <form class="register" [formGroup]="form" (ngSubmit)="register()">
+    <fieldset>
+      <h2>Регистрирайте се</h2>
+
+      <!-- username -->
+      <p class="field field-icon">
+        <label for="username">Име:</label>
+        <input
+          class="input-error"
+          type="text"
+          name="username"
+          id="username"
+          placeholder="Емилия"
+          formControlName="username"
+        />
+      </p>
+      <ng-container *ngIf="form.get('username')?.touched">
+        <p class="error" *ngIf="form.get('username')?.errors?.['required']">
+          Въведете потребителското име!
+        </p>
+        <p class="error" *ngIf="form.get('username')?.errors?.['minlength']">
+          Потребителското име трябва да е поне
+          {{form.get('username')?.errors?.['minlength']['requiredLength']}}
+          знака!
+        </p>
+      </ng-container>
+
+      <!-- email -->
+      <p class="field field-icon">
+        <label for="email">Email:</label>
+        <input
+          type="email"
+          name="email"
+          id="email"
+          placeholder="john.doe@gmail.com"
+          formControlName="email"
+        />
+      </p>
+      <ng-container *ngIf="form.get('email')?.touched">
+        <p class="error" *ngIf="form.get('email')?.errors?.['required']">
+          Въведете Email!
+        </p>
+        <p class="error" *ngIf="form.get('email')?.errors?.['minlength']">
+          Email трябва да е поне
+          {{form.get('email')?.errors?.['minlength']['requiredLength']}} знака!
+        </p>
+      </ng-container>
+
+      <ng-container formGroupName="passGroup">
+        <!-- password -->
+        <p class="field field-icon">
+          <label for="password">Парола:</label>
+          <input
+            type="password"
+            name="password"
+            id="password"
+            placeholder="******"
+            formControlName="password"
+          />
+        </p>
+        <ng-container *ngIf="form.get('passGroup')?.get('password')?.touched">
+          <p class="error" *ngIf="form.get('passGroup')?.get('password')?.errors?.['required']">Въведете парола!</p>
+          <p class="error" *ngIf="form.get('passGroup')?.get('password')?.errors?.['minlength']">Паролата трябва да бъде поне  {{form.get('passGroup')?.get('password')?.errors?.['minlength']['requiredLength']}} знака!</p>
+        </ng-container>
+        <!-- rePass -->
+        <p class="field field-icon">
+          <label for="rePass">Повторете паролата:</label>
+          <input
+            type="password"
+            name="rePass"
+            id="rePass"
+            placeholder="******"
+            formControlName="rePass"
+          />
+        </p>
+<ng-container *ngIf="form.get('passGroup')?.get('rePass')?.touched">
+        <p class="error" *ngIf="form.get('passGroup')?.get('rePass')?.errors?.['required']"> Повторете паролата!</p>
+        <p class="error" *ngIf="form.get('passGroup')?.errors?.['matchPassValidator']"> Паролите не съответстват! </p>
+      </ng-container>
+
+      </ng-container>
+      <button
+        [disabled]="form.invalid"
+        [style]="{ backgroundColor: form.invalid ? 'lightgray' : 'lightgreen' }"
+      >
+        Създайте профил
+      </button>
+
+      <p class="text-center">
+        Вече сте регистрирани?
+        <a routerLink="/login">Влезте в профила си</a>
+      </p>
+    </fieldset>
+  </form>
+</div>
+
+{{ form.value | json }}

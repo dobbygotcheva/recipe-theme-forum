@@ -1,0 +1,22 @@
+# Node modules
+node_modules/
+
+# Environment
+.env
+.env.*
+
+# Logs
+logs
+*.log
+
+# Coverage
+coverage/
+
+# Build output (if using TypeScript)
+dist/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+

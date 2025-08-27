@@ -1,0 +1,138 @@
+<div class="news-container">
+  <div class="news-header">
+    <h1>Актуално</h1>
+    <p>Най-новите новини и събития</p>
+    <button *ngIf="isAdmin" class="create-news-btn" (click)="showCreateNewsForm()">
+      <span class="material-symbols-outlined">add</span>
+      Добави новина
+    </button>
+  </div>
+
+  <div *ngIf="isLoading" class="loading">
+    <div class="spinner"></div>
+    <p>Зареждане на новини...</p>
+  </div>
+
+  <div *ngIf="!isLoading && news.length === 0" class="no-news">
+    <div class="no-news-icon">
+      <span class="material-symbols-outlined">newspaper</span>
+    </div>
+    <h3>Няма публикувани новини</h3>
+    <p>В момента няма активни новини. Проверете отново по-късно.</p>
+  </div>
+
+  <div *ngIf="!isLoading && news.length > 0" class="news-grid">
+    <div *ngFor="let article of news" class="news-card" (click)="viewNews(article)">
+      <div class="news-image" *ngIf="article.image">
+        <img [src]="article.image" [alt]="article.title">
+      </div>
+      <div class="news-content">
+        <div class="news-meta">
+          <span class="date">{{ article.created_at | date:'dd.MM.yyyy' }}</span>
+          <span *ngIf="article.featured" class="featured-badge">Избрано</span>
+        </div>
+        <h3 class="news-title">{{ article.title }}</h3>
+        <p class="news-summary">{{ article.summary }}</p>
+        <div class="news-preview">
+          <p>{{ getTruncatedContent(article.content) }}</p>
+        </div>
+        <div class="news-footer">
+          <span class="author">от {{ article.author && article.author.username }}</span>
+          <button class="read-more">Прочети повече</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- News Modal -->
+  <div *ngIf="selectedNews" class="news-modal" (click)="closeNews()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="close-btn" (click)="closeNews()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+
+      <div class="modal-header">
+        <div class="modal-meta">
+          <span class="date">{{ selectedNews.created_at | date:'dd.MM.yyyy' }}</span>
+          <span *ngIf="selectedNews.featured" class="featured-badge">Избрано</span>
+        </div>
+        <h2>{{ selectedNews.title }}</h2>
+        <p class="author">от {{ selectedNews.author && selectedNews.author.username }}</p>
+      </div>
+
+      <div class="modal-body">
+        <div *ngIf="selectedNews.image" class="modal-image">
+          <img [src]="selectedNews.image" [alt]="selectedNews.title">
+        </div>
+        <div class="modal-content-text">
+          <p class="summary">{{ selectedNews.summary }}</p>
+          <div class="content" [innerHTML]="selectedNews.content"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create News Form Modal -->
+  <div *ngIf="showCreateForm" class="create-news-modal" (click)="hideCreateNewsForm()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Добави нова новина</h2>
+        <button class="close-btn" (click)="hideCreateNewsForm()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <form [formGroup]="newsForm" (ngSubmit)="createNews()" class="news-form">
+        <div class="form-group">
+          <label for="title">Заглавие *</label>
+          <input id="title" type="text" formControlName="title" placeholder="Въведете заглавие на новината"
+            class="form-control">
+          <div *ngIf="newsForm.get('title')?.invalid && newsForm.get('title')?.touched" class="error-message">
+            Заглавието е задължително и трябва да е поне 5 символа
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="summary">Кратко описание *</label>
+          <textarea id="summary" formControlName="summary" placeholder="Кратко описание на новината" rows="3"
+            class="form-control"></textarea>
+          <div *ngIf="newsForm.get('summary')?.invalid && newsForm.get('summary')?.touched" class="error-message">
+            Описанието е задължително и трябва да е поне 10 символа
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="content">Съдържание *</label>
+          <textarea id="content" formControlName="content" placeholder="Пълно съдържание на новината" rows="8"
+            class="form-control"></textarea>
+          <div *ngIf="newsForm.get('content')?.invalid && newsForm.get('content')?.touched" class="error-message">
+            Съдържанието е задължително и трябва да е поне 50 символа
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="tags">Тагове</label>
+          <input id="tags" type="text" formControlName="tags" placeholder="Въведете тагове разделени със запетая"
+            class="form-control">
+        </div>
+
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="featured">
+            <span class="checkmark"></span>
+            Избрана новина
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="hideCreateNewsForm()">
+            Отказ
+          </button>
+          <button type="submit" class="btn-primary" [disabled]="newsForm.invalid">
+            Публикувай веднага
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

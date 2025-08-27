@@ -1,0 +1,165 @@
+<div class="container">
+  <div class="card">
+    <h2>{{ theme?.title }}</h2>
+    <!-- TODO after first post theme - see workshop forms last 20 min  -->
+    <!-- <a *ngIf="isOwner">Коригирай категорията</a> -->
+
+    <img src="{{ theme?.img }}" alt="{{ theme?.title }}" style="width: 100%" (error)="onImageError($event)"
+      onerror="this.onerror=null; this.src='assets/logo.jpg';" />
+    <h6> Категория: {{ theme?.category }}</h6>
+    <h6 class="time"><span class="material-symbols-outlined">
+        schedule
+      </span> Време на приготвяне в минути: {{ theme?.time }}</h6>
+    <h6>Съставки: </h6>
+    <ul *ngFor="let ingredient of (theme?.ingredients | list)">
+
+      <li> {{ ingredient }} </li>
+    </ul>
+    <h6>Начин на приготвяне: </h6>
+    <p>{{ theme?.text }}</p>
+
+    <!-- Video Tutorial Section -->
+    <div *ngIf="theme?.videoType" class="video-tutorial-section">
+      <h6>Видео урок:</h6>
+
+      <!-- YouTube Video -->
+      <div *ngIf="theme?.videoType === 'youtube' && theme?.videoUrl" class="youtube-video">
+        <iframe [src]="getYouTubeEmbedUrl(theme?.videoUrl || '')" width="100%" height="315" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+        <p class="video-source">Източник: YouTube</p>
+      </div>
+
+      <!-- Uploaded Video -->
+      <div *ngIf="theme?.videoType === 'upload' && theme?.videoFile" class="uploaded-video">
+        <video controls width="100%" height="315" preload="metadata">
+          <source [src]="theme?.videoFile || ''" type="video/mp4">
+          <source [src]="theme?.videoFile || ''" type="video/webm">
+          <source [src]="theme?.videoFile || ''" type="video/ogg">
+          Вашият браузър не поддържа видео елемента.
+        </video>
+        <p class="video-source">Качен видео файл</p>
+      </div>
+    </div>
+
+    <!-- Rating Section -->
+    <div class="rating-section">
+      <h6>Рейтинг: {{ getAverageRating() | number:'1.1-1' }} / 5 ({{ getTotalRatings() }} оценки)</h6>
+
+      <!-- Star Rating Display -->
+      <div class="stars-display">
+        <span *ngFor="let star of [1,2,3,4,5]" class="star {{ getStarClass(getAverageRating(), star) }}">
+          ★
+        </span>
+      </div>
+
+      <!-- User Rating Section -->
+      <div *ngIf="isLogged" class="user-rating">
+        <h6>Вашият рейтинг:</h6>
+        <div class="stars-input">
+          <span *ngFor="let star of [1,2,3,4,5]" class="star {{ getStarClass(userRating, star) }} clickable"
+            (click)="rateRecipe(star)">
+            ★
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="comments-section">
+      <h6>Коментари ({{ theme?.comments?.length || 0 }})</h6>
+
+      <!-- Add Comment Form -->
+      <div *ngIf="isLogged" class="comment-form">
+        <form [formGroup]="commentForm" (ngSubmit)="submitComment()">
+          <textarea formControlName="text" placeholder="Добавете коментар..." rows="3" class="comment-input">
+            </textarea>
+          <button type="submit" [disabled]="!commentForm.valid" class="comment-submit">
+            Добави коментар
+          </button>
+        </form>
+      </div>
+
+      <!-- Comments List with Unlimited Nesting -->
+      <div class="comments-list">
+        <ng-container *ngTemplateOutlet="commentTemplate; context: { $implicit: theme?.comments, level: 0 }">
+        </ng-container>
+      </div>
+
+      <!-- Recursive Comment Template -->
+      <ng-template #commentTemplate let-comments let-level="level">
+        <div *ngFor="let comment of comments" class="comment-item" [class]="'level-' + level">
+
+          <!-- Comment Header -->
+          <div class="comment-header">
+            <div class="user-info">
+              <div class="user-avatar" [class.current-user]="isCurrentUserComment(comment.userId)">
+                <img [src]="getUserAvatar(comment.userId)" [alt]="comment.username + ' avatar'"
+                  (error)="onAvatarError($event)" class="avatar-image">
+              </div>
+              <div class="user-details">
+                <span class="username">{{ comment.username }}</span>
+                <span class="comment-date">{{ comment.created_at | date:'short' }}</span>
+              </div>
+            </div>
+            <button *ngIf="canDeleteComment(comment)" (click)="deleteComment(comment._id)" class="delete-comment">
+              Изтрий
+            </button>
+          </div>
+
+          <!-- Comment Text -->
+          <p class="comment-text">{{ comment.text }}</p>
+
+          <!-- Comment Actions -->
+          <div class="comment-actions">
+            <div class="like-dislike-buttons">
+              <button class="action-btn like-btn" [class.active]="hasUserLiked(comment)" (click)="likeComment(comment)"
+                [disabled]="!isLogged">
+                <span class="material-symbols-outlined">thumb_up</span>
+                <span class="count">{{ getLikeCount(comment) }}</span>
+              </button>
+
+              <button class="action-btn dislike-btn" [class.active]="hasUserDisliked(comment)"
+                (click)="dislikeComment(comment)" [disabled]="!isLogged">
+                <span class="material-symbols-outlined">thumb_down</span>
+                <span class="count">{{ getDislikeCount(comment) }}</span>
+              </button>
+
+              <!-- Reply Button -->
+              <button *ngIf="isLogged" class="action-btn reply-btn" (click)="startReply(comment._id)">
+                <span class="material-symbols-outlined">reply</span>
+                Отговори
+              </button>
+            </div>
+          </div>
+
+          <!-- Reply Form -->
+          <div *ngIf="replyingTo === comment._id" class="reply-form">
+            <form [formGroup]="replyForm" (ngSubmit)="submitReply()">
+              <textarea formControlName="text" placeholder="Напишете отговор..." rows="2" class="reply-input">
+                </textarea>
+              <div class="reply-actions">
+                <button type="submit" [disabled]="!replyForm.valid" class="reply-submit">
+                  Отговори
+                </button>
+                <button type="button" (click)="cancelReply()" class="reply-cancel">
+                  Отказ
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Recursive Replies - Unlimited Nesting! -->
+          <div *ngIf="comment.replies && comment.replies.length > 0" class="replies">
+            <ng-container
+              *ngTemplateOutlet="commentTemplate; context: { $implicit: comment.replies, level: level + 1 }">
+            </ng-container>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+
+
+  </div>
+</div>

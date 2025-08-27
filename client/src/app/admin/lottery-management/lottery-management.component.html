@@ -1,0 +1,219 @@
+<div class="lottery-management-container">
+  <div class="header">
+    <h2><i class="fas fa-gift"></i> Управление на Томболата</h2>
+    <p>Управлявайте настройките на томболата и избирайте победители</p>
+  </div>
+
+  <!-- Loading state -->
+  <div class="loading-container" *ngIf="loading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Зареждане...</span>
+    </div>
+    <p>Зареждане...</p>
+  </div>
+
+  <!-- Lottery information -->
+  <div class="lottery-info" *ngIf="lottery && !loading">
+    <div class="info-card">
+      <div class="card-header">
+        <h3>Информация за томболата</h3>
+        <button 
+          class="btn btn-outline-primary btn-sm"
+          (click)="startEditing()"
+          *ngIf="!isEditing">
+          <i class="fas fa-edit"></i> Редактирай
+        </button>
+      </div>
+      
+      <div class="card-body">
+        <div class="info-row">
+          <label>Име:</label>
+          <span>{{ lottery.name }}</span>
+        </div>
+        
+        <div class="info-row">
+          <label>Описание:</label>
+          <span>{{ lottery.description }}</span>
+        </div>
+        
+        <div class="info-row">
+          <label>Награда:</label>
+          <span>{{ lottery.prize }}</span>
+        </div>
+        
+        <div class="info-row">
+          <label>Начална дата:</label>
+          <span>{{ lottery.startDate | date:'medium' }}</span>
+        </div>
+        
+        <div class="info-row">
+          <label>Крайна дата:</label>
+          <span>{{ lottery.endDate | date:'medium' }}</span>
+        </div>
+        
+        <div class="info-row">
+          <label>Статус:</label>
+          <span class="status-badge" [ngClass]="lottery.isActive ? 'active' : 'inactive'">
+            {{ lottery.isActive ? 'Активна' : 'Неактивна' }}
+          </span>
+        </div>
+        
+        <div class="info-row">
+          <label>Участници:</label>
+          <span>{{ lottery.participants.length }} / {{ lottery.maxParticipants }}</span>
+        </div>
+        
+        <div class="info-row" *ngIf="lottery.winner">
+          <label>Победител:</label>
+          <span class="winner-name">{{ lottery.winner.username }}</span>
+        </div>
+        
+        <div class="info-row" *ngIf="lottery.isActive && !lottery.winner">
+          <label>Оставащо време:</label>
+          <span>{{ getTimeRemaining() }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit form -->
+    <div class="edit-form" *ngIf="isEditing">
+      <div class="form-card">
+        <h4>Редактиране на томболата</h4>
+        
+        <form [formGroup]="editForm" (ngSubmit)="saveChanges()">
+          <div class="form-group">
+            <label for="name">Име на томболата</label>
+            <input 
+              type="text" 
+              id="name" 
+              formControlName="name" 
+              class="form-control"
+              [class.is-invalid]="editForm.get('name')?.invalid && editForm.get('name')?.touched">
+            <div class="invalid-feedback" *ngIf="editForm.get('name')?.invalid && editForm.get('name')?.touched">
+              Името е задължително
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="description">Описание</label>
+            <textarea 
+              id="description" 
+              formControlName="description" 
+              class="form-control"
+              rows="3"
+              [class.is-invalid]="editForm.get('description')?.invalid && editForm.get('description')?.touched"></textarea>
+            <div class="invalid-feedback" *ngIf="editForm.get('description')?.invalid && editForm.get('description')?.touched">
+              Описанието е задължително
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="prize">Награда</label>
+            <input 
+              type="text" 
+              id="prize" 
+              formControlName="prize" 
+              class="form-control"
+              [class.is-invalid]="editForm.get('prize')?.invalid && editForm.get('prize')?.touched">
+            <div class="invalid-feedback" *ngIf="editForm.get('prize')?.invalid && editForm.get('prize')?.touched">
+              Наградата е задължителна
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="endDate">Крайна дата</label>
+            <input 
+              type="datetime-local" 
+              id="endDate" 
+              formControlName="endDate" 
+              class="form-control"
+              [class.is-invalid]="editForm.get('endDate')?.invalid && editForm.get('endDate')?.touched">
+            <div class="invalid-feedback" *ngIf="editForm.get('endDate')?.invalid && editForm.get('endDate')?.touched">
+              Крайната дата е задължителна
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="maxParticipants">Максимален брой участници</label>
+            <input 
+              type="number" 
+              id="maxParticipants" 
+              formControlName="maxParticipants" 
+              class="form-control"
+              min="1" 
+              max="1000"
+              [class.is-invalid]="editForm.get('maxParticipants')?.invalid && editForm.get('maxParticipants')?.touched">
+            <div class="invalid-feedback" *ngIf="editForm.get('maxParticipants')?.invalid && editForm.get('maxParticipants')?.touched">
+              Валиден брой участници (1-1000)
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="editForm.invalid || loading">
+              <i class="fas fa-save"></i> {{ loading ? 'Запазване...' : 'Запази' }}
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="cancelEditing()">
+              <i class="fas fa-times"></i> Отказ
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions-section">
+      <div class="action-buttons">
+        <button 
+          class="btn btn-success"
+          (click)="drawWinner()"
+          [disabled]="!canDrawWinner() || loading">
+          <i class="fas fa-trophy"></i> Избери победител
+        </button>
+        
+        <button 
+          class="btn btn-warning"
+          (click)="resetLottery()"
+          [disabled]="!canReset() || loading">
+          <i class="fas fa-redo"></i> Рестартирай томболата
+        </button>
+      </div>
+    </div>
+
+    <!-- Participants list -->
+    <div class="participants-section" *ngIf="lottery.participants.length > 0">
+      <h4><i class="fas fa-users"></i> Списък с участници ({{ lottery.participants.length }})</h4>
+      
+      <div class="participants-table">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Потребител</th>
+              <th>Дата на присъединяване</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let participant of lottery.participants; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ participant.username }}</td>
+              <td>{{ participant.joinDate | date:'medium' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error and success messages -->
+  <div class="message-container">
+    <div class="alert alert-danger" *ngIf="error">
+      <i class="fas fa-exclamation-triangle"></i>
+      {{ error }}
+    </div>
+    
+    <div class="alert alert-success" *ngIf="success">
+      <i class="fas fa-check-circle"></i>
+      {{ success }}
+    </div>
+  </div>
+</div>
